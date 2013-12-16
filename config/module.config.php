@@ -130,14 +130,6 @@ return array(
                 'route' => 'admin/playgroundgallery',
                 'resource' => 'playgroundgallery',
                 'privilege' => 'index',
-                'pages' => array(
-                    'list-media' => array(
-                        'label' => 'Medias List',
-                        'route' => 'admin/playgroundgallery',
-                        'resource' => 'playgroundgallery',
-                        'privilege' => 'index',
-                    )
-                ),
             ),
         ),
     ),

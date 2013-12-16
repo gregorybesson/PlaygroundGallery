@@ -26,7 +26,7 @@ class Category extends ProvidesEventsForm
             ),
             'attributes' => array(
                 'type' => 'text',
-            	'placeholder' => $translator->translate('name', 'playgroundgallery'),
+            	'placeholder' => $translator->translate('Name', 'playgroundgallery'),
             	'required' => 'required',
                 'class' => 'form-control',
             ),
@@ -54,10 +54,7 @@ class Category extends ProvidesEventsForm
             'options' => array(
                 'label' => $translator->translate('websites', 'playgroundgallery'),
                 'value_options' => $this->getWebsites(),
-
-
             ),
-
             'attributes' => array(
                 'class' => 'form-control multiselect',
                 'multiple' => 'multiple',

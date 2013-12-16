@@ -63,18 +63,6 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
         return $category;
     }
 
-    public function addCategoryParent($category, $data)
-    {
-        if (empty($data['parent'])) {
-            return $category;
-        }
-
-        $categoryParent = $this->getCategoryMapper()->findById($data['parent']);
-        $category->setParent($categoryParent);
-
-        return $category;
-    }
-
     /**
      *
      * This service is ready for edit a category
@@ -101,6 +89,18 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
             return false;
         }
         $category = $this->getCategoryMapper()->update($category);
+
+        return $category;
+    }
+
+    public function addCategoryParent($category, $data)
+    {
+        if (empty($data['parent'])) {
+            return $category;
+        }
+
+        $categoryParent = $this->getCategoryMapper()->findById($data['parent']);
+        $category->setParent($categoryParent);
 
         return $category;
     }

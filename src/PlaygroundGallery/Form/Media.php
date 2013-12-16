@@ -26,7 +26,7 @@ class Media extends ProvidesEventsForm
             ),
             'attributes' => array(
                 'type' => 'text',
-            	'placeholder' => $translator->translate('category', 'playgroundgallery'),
+            	'placeholder' => $translator->translate('Category', 'playgroundgallery'),
             	'required' => 'required',
                 'class' => 'form-control'
             ),
@@ -42,7 +42,7 @@ class Media extends ProvidesEventsForm
             ),
             'attributes' => array(
                 'type' => 'text',
-            	'placeholder' => $translator->translate('name', 'playgroundgallery'),
+            	'placeholder' => $translator->translate('Name', 'playgroundgallery'),
             	'required' => 'required',
                 'class' => 'form-control'
             ),
@@ -59,7 +59,7 @@ class Media extends ProvidesEventsForm
     		),
     		'attributes' => array(
     				'type' => 'text',
-    				'placeholder' => $translator->translate('url', 'playgroundgallery'),
+    				'placeholder' => $translator->translate('Url', 'playgroundgallery'),
     				'required' => 'required',
                     'class' => 'form-control'
             ),
@@ -69,13 +69,13 @@ class Media extends ProvidesEventsForm
         ));
 
         $this->add(array(
-    		'name' => 'credits',
+    		'name' => 'credit',
     		'options' => array(
-    				'label' => $translator->translate('Credits', 'playgroundgallery'),
+    				'label' => $translator->translate('Credit', 'playgroundgallery'),
     		),
     		'attributes' => array(
     				'type' => 'text',
-    				'placeholder' => $translator->translate('credits', 'playgroundgallery'),
+    				'placeholder' => $translator->translate('Credit', 'playgroundgallery'),
     				'required' => 'required',
                     'class' => 'form-control'
             ),
@@ -91,7 +91,7 @@ class Media extends ProvidesEventsForm
     		),
     		'attributes' => array(
     				'type' => 'Zend\Form\Element\Textarea',
-    				'placeholder' => $translator->translate('description', 'playgroundgallery'),
+    				'placeholder' => $translator->translate('Description', 'playgroundgallery'),
     				'required' => 'required',
                     'class' => 'form-control'
             ),

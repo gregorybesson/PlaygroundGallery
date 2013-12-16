@@ -16,6 +16,20 @@ class Module
         $eventManager    = $application->getEventManager();
 
         $translator = $serviceManager->get('translator');
+
+        // Gestion de la locale
+        if (PHP_SAPI !== 'cli') {
+            $locale = null;
+            $options = $serviceManager->get('playgroundcore_module_options');
+
+            $locale = $options->getLocale();
+
+            $translator->setLocale($locale);
+
+            // plugins
+            $translate = $serviceManager->get('viewhelpermanager')->get('translate');
+            $translate->getTranslator()->setLocale($locale);  
+        }
         
         AbstractValidator::setDefaultTranslator($translator,'playgroundgallery');
     }

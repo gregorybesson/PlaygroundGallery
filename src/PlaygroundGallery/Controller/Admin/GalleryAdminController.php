@@ -18,8 +18,6 @@ class GalleryAdminController extends AbstractActionController
     protected $mediaService;
     protected $categoryService;
 
-    protected $moduleOptions;
-
     public function indexAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -47,14 +45,7 @@ class GalleryAdminController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
-            try {
-                $headers = get_headers($data['url']);
-                $headersBool = true;
-            }
-            catch(Exception $e) {
-                $headersBool = false;
-            }
-            if($form->isValid() && $headersBool) {
+            if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->create($data);
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -86,14 +77,7 @@ class GalleryAdminController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
-            try {
-                $headers = get_headers($data['url']);
-                $headersBool = true;
-            }
-            catch(Exception $e) {
-                $headersBool = false;
-            }
-            if($form->isValid() && $headersBool) {
+            if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->edit($data, $media);
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -108,6 +92,24 @@ class GalleryAdminController extends AbstractActionController
         }
 
         return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
+
+    public function checkValidUrl($url) {
+        $handle = curl_init($url);
+
+        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
+        $response = curl_exec($handle);
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        if($httpCode == 200) {
+            $headersBool = true;
+        }
+        else {
+            $headersBool = false;
+        }
+
+        curl_close($handle);
+
+        return $headersBool;
     }
 
     public function removeAction() {
@@ -192,13 +194,5 @@ class GalleryAdminController extends AbstractActionController
             $this->mediaService = $this->getServiceLocator()->get('playgroundgallery_media_service');
         }
         return $this->mediaService;
-    }
-
-    public function getModuleOptions()
-    {
-        if (!$this->moduleOptions) {
-            $this->moduleOptions = $this->getServiceLocator()->get('playgroundgallery_module_options');
-        }
-        return $this->moduleOptions;
     }
 }

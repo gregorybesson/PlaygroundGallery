@@ -39,10 +39,10 @@ class Media implements InputFilterAwareInterface
     protected $name;
 
     /**
-     * credits
+     * credit
      * @ORM\Column(type="string", length=255, nullable=false)
      */
-    protected $credits;
+    protected $credit;
 
     /**
      * description
@@ -137,22 +137,22 @@ class Media implements InputFilterAwareInterface
     }
     
     /**
-     * @param string $credits
+     * @param string $credit
      * @return Media
      */
-    public function setCredits($credits)
+    public function setCredit($credit)
     {
-    	$this->credits = (string) $credits;
+    	$this->credit = (string) $credit;
     
     	return $this;
     }
     
     /**
-     * @return string $credits
+     * @return string $credit
      */
-    public function getCredits()
+    public function getCredit()
     {
-    	return $this->credits;
+    	return $this->credit;
     }
 
     /**
@@ -247,8 +247,8 @@ class Media implements InputFilterAwareInterface
         if (isset($data['name']) && $data['name'] != null) {
         	$this->name = $data['name'];
         }
-        if (isset($data['credits']) && $data['credits'] != null) {
-        	$this->credits = $data['credits'];
+        if (isset($data['credit']) && $data['credit'] != null) {
+        	$this->credit = $data['credit'];
         }
         if (isset($data['url']) && $data['url'] != null) {
         	$this->url = $data['url'];

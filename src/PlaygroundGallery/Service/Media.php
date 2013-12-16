@@ -69,18 +69,6 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         return $media;
     }
 
-    public function addCategory($media, $data)
-    {
-        if (empty($data['category'])) {
-            return $media;
-        }
-
-        $category = $this->getCategoryMapper()->findById($data['category']);
-        $media->setCategory($category);
-
-        return $category;
-    }
-
     /**
      *
      * This service is ready for edit a media
@@ -111,6 +99,18 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         return $media;
     }
 
+    public function addCategory($media, $data)
+    {
+        if (empty($data['category'])) {
+            return $media;
+        }
+
+        $category = $this->getCategoryMapper()->findById($data['category']);
+        $media->setCategory($category);
+
+        return $media;
+    }
+    
     /**
      * getMediaMapper
      *
