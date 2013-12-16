@@ -27,7 +27,8 @@ class Media extends ProvidesEventsForm
             'attributes' => array(
                 'type' => 'text',
             	'placeholder' => $translator->translate('category', 'playgroundgallery'),
-            	'required' => 'required'
+            	'required' => 'required',
+                'class' => 'form-control'
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
@@ -42,27 +43,14 @@ class Media extends ProvidesEventsForm
             'attributes' => array(
                 'type' => 'text',
             	'placeholder' => $translator->translate('name', 'playgroundgallery'),
-            	'required' => 'required'
+            	'required' => 'required',
+                'class' => 'form-control'
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
             )
         ));
         
-        $this->add(array(
-    		'name' => 'size',
-    		'options' => array(
-    				'label' => $translator->translate('Size', 'playgroundgallery'),
-    		),
-    		'attributes' => array(
-				'type' => 'text',
-				'placeholder' => $translator->translate('Size', 'playgroundgallery'),
-				'required' => 'required'
-            ),
-            'validator' => array(
-                new \Zend\Validator\NotEmpty(),
-            )
-        ));
         
         $this->add(array(
     		'name' => 'url',
@@ -72,7 +60,8 @@ class Media extends ProvidesEventsForm
     		'attributes' => array(
     				'type' => 'text',
     				'placeholder' => $translator->translate('url', 'playgroundgallery'),
-    				'required' => 'required'
+    				'required' => 'required',
+                    'class' => 'form-control'
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
@@ -87,7 +76,8 @@ class Media extends ProvidesEventsForm
     		'attributes' => array(
     				'type' => 'text',
     				'placeholder' => $translator->translate('credits', 'playgroundgallery'),
-    				'required' => 'required'
+    				'required' => 'required',
+                    'class' => 'form-control'
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
@@ -100,9 +90,10 @@ class Media extends ProvidesEventsForm
     				'label' => $translator->translate('Description', 'playgroundgallery'),
     		),
     		'attributes' => array(
-    				'type' => 'text',
+    				'type' => 'Zend\Form\Element\Textarea',
     				'placeholder' => $translator->translate('description', 'playgroundgallery'),
-    				'required' => 'required'
+    				'required' => 'required',
+                    'class' => 'form-control'
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
@@ -113,10 +104,13 @@ class Media extends ProvidesEventsForm
             'type' => 'Zend\Form\Element\Select',
             'name' => 'category',
             'options' => array(
-                'label' => $translator->translate('category', 'playgroundtranslate'),
+                'label' => $translator->translate('Category', 'playgroundtranslate'),
                 'value_options' => $this->getCategories(),
                 'default' => 3
-            )
+            ),
+            'attributes' => array(
+                'class' => 'form-control'
+            ),
         ));
         
         $submitElement = new Element\Button('submit');

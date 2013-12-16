@@ -23,7 +23,7 @@ class PrintCategoryTree extends AbstractHelper
 		endforeach;
     }
 
-    private function printChildren($category, $wave = 2) {
+    private function printChildren($category, $wave = 0) {
 		echo '<span href="#filter" data-option-value=".cat-'.strtolower($category->getId()).'" type="button" class="folder-btn" data-id="'.$category->getId().'" data-option-key="filter" style="margin-left: '. ( $wave*5 ) .'px;"><span class="glyphicon glyphicon-folder-close"></span>'.$category->getName().'<span class="border">&nbsp;</span></span>';
 		echo '<div class="folder-'.$category->getId().'" style="display: none;">';
         foreach ($category->getChildren() as $children):

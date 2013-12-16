@@ -150,21 +150,17 @@ class GalleryAdminController extends AbstractActionController
         $form->setAttribute('method', 'post');
 
         if ($this->getRequest()->isPost()) {
-            $form->bind($this->getRequest()->getPost());
-            if($form->isValid()) {
-                $contact = $this->getCategoryService()->create($this->getRequest()->getPost()->toArray());
-                if($contact) {
-                    return $this->redirect()->toRoute('admin/playgroundgallery');
-                }
-                else {
-                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
-                }
+            $contact = $this->getCategoryService()->create($this->getRequest()->getPost()->toArray());
+            
+            if($contact) {
+                return $this->redirect()->toRoute('admin/playgroundgallery');
             }
             else {
                 $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
             }
+          
         }
-
+    
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
     

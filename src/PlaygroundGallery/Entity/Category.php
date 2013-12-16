@@ -49,8 +49,13 @@ class Category implements InputFilterAwareInterface
      */
     protected $medias;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="PlaygroundTranslate\Entity\Website")
+     /**
+     * @var \Doctrine\Common\Collections\Collection
+     * @ORM\ManyToMany(targetEntity="PlaygroundCore\Entity\Website")
+     * @ORM\JoinTable(name="gallery_category_website",
+     *      joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")}
+     * )
      */
     protected $website;
 
@@ -63,6 +68,41 @@ class Category implements InputFilterAwareInterface
      * @ORM\Column(type="datetime")
      */
     protected $updated_at;
+
+
+    public function __construct()
+    {
+        $this->websites = new ArrayCollection();
+    }
+
+     /**
+     * Get websites.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
+    }
+
+    /**
+     * Add a website to the user.
+     *
+     * @param Website $website
+     *
+     * @return void
+     */
+    public function addWebsite($website)
+    {
+        $this->websites[] = $website;
+    }
+
+    public function removeWebsite(){
+        $this->websites = new ArrayCollection();
+
+        return $this;
+    }
+
 
     /**
      * @param string $id

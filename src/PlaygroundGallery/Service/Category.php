@@ -50,12 +50,13 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
 
         $this->addCategoryParent($category, $data);
 
+
+        $category = $this->addWebsite($category, $data['websites']);
+
         $form->bind($category);
         $form->setData($data);
 
-        if (!$form->isValid()) {
-            return false;
-        }
+
 
         $category = $this->getCategoryMapper()->insert($category);
 
@@ -101,6 +102,16 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
         }
         $category = $this->getCategoryMapper()->update($category);
 
+        return $category;
+    }
+
+    public function addWebsite($category, $data)
+    {
+        foreach ($data as $websiteId) {
+            if(is_numeric($websiteId)) {
+                $category->addWebsite($this->getServiceManager()->get('playgroundcore_website_mapper')->findById($websiteId));   
+            }
+        }
         return $category;
     }
 

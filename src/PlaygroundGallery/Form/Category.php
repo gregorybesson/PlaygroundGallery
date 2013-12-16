@@ -27,7 +27,8 @@ class Category extends ProvidesEventsForm
             'attributes' => array(
                 'type' => 'text',
             	'placeholder' => $translator->translate('name', 'playgroundgallery'),
-            	'required' => 'required'
+            	'required' => 'required',
+                'class' => 'form-control',
             ),
             'validator' => array(
                 new \Zend\Validator\NotEmpty(),
@@ -40,7 +41,28 @@ class Category extends ProvidesEventsForm
             'options' => array(
                 'label' => $translator->translate('parent', 'playgroundgallery'),
                 'value_options' => $this->getCategories(),
-            )
+            ),
+            'attributes' => array(
+                'class' => 'form-control',
+            ),
+        ));
+
+
+        $this->add(array(
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'websites',
+            'options' => array(
+                'label' => $translator->translate('websites', 'playgroundgallery'),
+                'value_options' => $this->getWebsites(),
+
+
+            ),
+
+            'attributes' => array(
+                'class' => 'form-control multiselect',
+                'multiple' => 'multiple',
+                'value' => array_keys($this->getWebsites()),
+            ),
         ));
         
         $submitElement = new Element\Button('submit');
@@ -56,8 +78,18 @@ class Category extends ProvidesEventsForm
 
     }
 
+    private function getWebsites()
+    {
+        $websites = $this->getServiceManager()->get('playgroundcore_website_service')->getWebsiteMapper()->findAll();
+        $websitesForm = array();
+        foreach ($websites as $website) {
+           $websitesForm[$website->getId()] = $website->getName();
+        }
+        return $websitesForm;
+    }
+
     private function getCategories() {
-        $categories = $this->serviceManager->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
+        $categories = $this->getServiceManager()->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
         $categoriesForm = array();
         foreach ($categories as $category) {
             $this->getChildrenCategories($category, $categoriesForm);
@@ -83,7 +115,7 @@ class Category extends ProvidesEventsForm
      *
      * @return ServiceManager
      */
-    public function getServiceManager ()
+    public function getServiceManager()
     {
         return $this->serviceManager;
     }
@@ -94,7 +126,7 @@ class Category extends ProvidesEventsForm
      * @param  ServiceManager $serviceManager
      * @return User
      */
-    public function setServiceManager (ServiceManager $serviceManager)
+    public function setServiceManager(ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
 
