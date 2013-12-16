@@ -37,7 +37,7 @@ class Category extends ProvidesEventsForm
 
         $this->add(array(
             'type' => 'Zend\Form\Element\Select',
-            'name' => 'parent',
+            'name' => 'Parent',
             'options' => array(
                 'label' => $translator->translate('parent', 'playgroundgallery'),
                 'value_options' => $this->getCategories(),
