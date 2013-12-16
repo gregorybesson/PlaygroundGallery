@@ -127,7 +127,7 @@ class Media extends ProvidesEventsForm
     }
 
     private function getCategories() {
-        $categories = $this->serviceManager->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
+        $categories = $this->getServiceManager()->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
         $categoriesForm = array();
         foreach ($categories as $category) {
             $this->getChildrenCategories($category, $categoriesForm);

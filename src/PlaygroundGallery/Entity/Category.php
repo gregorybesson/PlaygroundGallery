@@ -53,11 +53,11 @@ class Category implements InputFilterAwareInterface
      * @var \Doctrine\Common\Collections\Collection
      * @ORM\ManyToMany(targetEntity="PlaygroundCore\Entity\Website")
      * @ORM\JoinTable(name="gallery_category_website",
-     *      joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id")}
      * )
      */
-    protected $website;
+    protected $websites;
 
     /**
      * @ORM\Column(type="datetime")
@@ -202,25 +202,6 @@ class Category implements InputFilterAwareInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @param string $website
-     * @return Category
-     */
-    public function setWebsite($website)
-    {
-        $this->website = $website;
-
-        return $this;
-    }
-
-    /**
-     * @return string $website
-     */
-    public function getWebsite()
-    {
-        return $this->website;
     }
 
     /**

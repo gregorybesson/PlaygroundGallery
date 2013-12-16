@@ -39,12 +39,6 @@ class Media implements InputFilterAwareInterface
     protected $name;
 
     /**
-     * size
-     * @ORM\Column(type="integer", length=255, nullable=false)
-     */
-    protected $size;
-
-    /**
      * credits
      * @ORM\Column(type="string", length=255, nullable=false)
      */
@@ -140,25 +134,6 @@ class Media implements InputFilterAwareInterface
     public function getName()
     {
         return $this->name;
-    }
-    
-    /**
-     * @param string $size
-     * @return Media
-     */
-    public function setSize($size)
-    {
-    	$this->size = $size;
-    
-    	return $this;
-    }
-    
-    /**
-     * @return string $size
-     */
-    public function getSize()
-    {
-    	return $this->size;
     }
     
     /**
@@ -271,9 +246,6 @@ class Media implements InputFilterAwareInterface
         }
         if (isset($data['name']) && $data['name'] != null) {
         	$this->name = $data['name'];
-        }
-        if (isset($data['size']) && $data['size'] != null) {
-        	$this->size = $data['size'];
         }
         if (isset($data['credits']) && $data['credits'] != null) {
         	$this->credits = $data['credits'];

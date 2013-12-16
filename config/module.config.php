@@ -23,17 +23,6 @@ return array(
             )
         )
     ),
-    'translator' => array(
-        'locale' => 'fr_FR',
-        'translation_file_patterns' => array(
-            array(
-                'type'         => 'phpArray',
-                'base_dir'     => __DIR__ . '/../language',
-                'pattern'      => '%s.php',
-                'text_domain'  => 'glaygroundgallery'
-            ),
-        ),
-    ),
     'router' => array(
         'routes' => array(
             'admin' => array(
@@ -118,28 +107,6 @@ return array(
                                 ),
                             ),
                         ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'assetic_configuration' => array(
-        'modules' => array(
-            'translate_lib' => array(
-                # module root path for your css and js files
-                'root_path' => array(
-                    __DIR__ . '/../view/lib',
-                ),
-                # collection of assets
-                'collections' => array(    
-                    'flags' => array(
-                        'assets' => array(
-                            'flag/*.png',
-                        ),
-                        'options' => array(
-                            'move_raw' => true,
-                            'output' => 'lib',
-                        )
                     ),
                 ),
             ),

@@ -47,7 +47,14 @@ class GalleryAdminController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
-            if($form->isValid() && @get_headers($data['url'])) {
+            try {
+                $headers = get_headers($data['url']);
+                $headersBool = true;
+            }
+            catch(Exception $e) {
+                $headersBool = false;
+            }
+            if($form->isValid() && $headersBool) {
                 $media = $this->getMediaService()->create($data);
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -79,7 +86,14 @@ class GalleryAdminController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
-            if($form->isValid() && @get_headers($data['url'])) {
+            try {
+                $headers = get_headers($data['url']);
+                $headersBool = true;
+            }
+            catch(Exception $e) {
+                $headersBool = false;
+            }
+            if($form->isValid() && $headersBool) {
                 $media = $this->getMediaService()->edit($data, $media);
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -120,10 +134,10 @@ class GalleryAdminController extends AbstractActionController
 
         foreach (get_headers($media->getUrl()) as $value) {
             if(preg_match('%Content-Type%', $value)) {
-                $tmp = explode(':', $value);
-                $tmp = explode('/', end($tmp));
-                $mime = trim($tmp[0]);
-                $type = trim($tmp[1]);
+                $typeMine = explode(':', $value);
+                $typeMine = explode('/', end($typeMine));
+                $mime = trim($typeMine[0]);
+                $type = trim($typeMine[1]);
             }
         }
 

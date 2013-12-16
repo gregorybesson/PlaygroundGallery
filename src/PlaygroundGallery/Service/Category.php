@@ -108,8 +108,9 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
     public function addWebsite($category, $data)
     {
         foreach ($data as $websiteId) {
-            if(is_numeric($websiteId)) {
-                $category->addWebsite($this->getServiceManager()->get('playgroundcore_website_mapper')->findById($websiteId));   
+            $website = $this->getServiceManager()->get('playgroundcore_website_mapper')->findById($websiteId);
+            if($website) {
+                $category->addWebsite($website);
             }
         }
         return $category;
