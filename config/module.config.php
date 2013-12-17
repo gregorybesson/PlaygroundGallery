@@ -104,6 +104,32 @@ return array(
                                             ),
                                         ),
                                     ),
+                                    'edit' => array(
+                                        'type' => 'Segment',
+                                        'options' => array(
+                                             'route' => '/edit[/:categoryId]',
+                                            'defaults' => array(
+                                                'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                                'action'     => 'editCategory',
+                                            ),
+                                            'constraints' => array(
+                                                'categoryId' => '[0-9]*',
+                                            ),
+                                        ),
+                                    ),
+                                    'remove' => array(
+                                        'type' => 'Segment',
+                                        'options' => array(
+                                             'route' => '/remove[/:categoryId]',
+                                            'defaults' => array(
+                                                'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                                'action'     => 'removeCategory',
+                                            ),
+                                            'constraints' => array(
+                                                'categoryId' => '[0-9]*',
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),

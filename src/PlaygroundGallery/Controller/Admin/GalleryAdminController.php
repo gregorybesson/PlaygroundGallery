@@ -179,6 +179,52 @@ class GalleryAdminController extends AbstractActionController
     
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
+
+    public function editCategoryAction() {
+        $categoryId = $this->getEvent()->getRouteMatch()->getParam('categoryId');
+        if (!$categoryId) {
+            return $this->redirect()->toRoute('admin/playgroundgallery');
+        }
+        $category = $this->getCategoryService()->getCategoryMapper()->findByid($categoryId);
+
+
+        $form = $this->getServiceLocator()->get('playgroundgallery_category_form');
+        $form->bind($category);
+
+        if ($this->getRequest()->isPost()) {
+            $form->bind($this->getRequest()->getPost());
+            $data = $this->getRequest()->getPost()->toArray();
+            if($form->isValid()) {
+                $category = $this->getCategoryService()->edit($data, $category);
+                if($category) {
+                    return $this->redirect()->toRoute('admin/playgroundgallery');
+                }
+                else {
+                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+                }
+            }
+            else {
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+            }
+        }
+
+        return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
+
+    public function removeCategoryAction() {
+        $categoryId = $this->getEvent()->getRouteMatch()->getParam('categoryId');
+        if (!$categoryId) {
+            return $this->redirect()->toRoute('admin/playgroundgallery');
+        }
+        $category = $this->getCategoryService()->getCategoryMapper()->findByid($categoryId);
+        
+        if(count($category->getChildren())==0) {
+            $category = $this->getCategoryService()->getCategoryMapper()->remove($category);
+        } else {
+            $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error : you can\'t remove a category who contains one or more categories.');
+        }
+        return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
     
     public function getCategoryService()
     {
