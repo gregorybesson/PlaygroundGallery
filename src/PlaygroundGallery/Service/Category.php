@@ -85,6 +85,8 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
 
         $form->setData($data);
 
+        $category->setName($data['name']);
+
         if (!$form->isValid()) {
             return false;
         }
