@@ -11,6 +11,9 @@ use Zend\ServiceManager\ServiceManager;
 class Category extends ProvidesEventsForm
 {
 
+    /**
+    * @var $serviceManager Service Manager
+    */
     protected $serviceManager;
 
     public function __construct ($name = null, ServiceManager $sm, Translator $translator)
@@ -75,6 +78,11 @@ class Category extends ProvidesEventsForm
 
     }
 
+    /**
+    * Récupère la liste des websites
+    *
+    * @return array $websitesForm liste des websites
+    */
     private function getWebsites()
     {
         $websites = $this->getServiceManager()->get('playgroundcore_website_service')->getWebsiteMapper()->findAll();
@@ -85,6 +93,11 @@ class Category extends ProvidesEventsForm
         return $websitesForm;
     }
 
+    /**
+    * Récupère la liste des categories
+    *
+    * @return array $websitesForm liste des categories
+    */
     private function getCategories() {
         $categories = $this->getServiceManager()->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
         $categoriesForm = array();
@@ -94,6 +107,10 @@ class Category extends ProvidesEventsForm
         return $categoriesForm;
     }
 
+    /**
+    * Récupère la liste des categories enfants d'une categorie
+    *
+    */
     private function getChildrenCategories($category, &$categoriesForm, $wave = 1) {
         
         $prefixe = '';

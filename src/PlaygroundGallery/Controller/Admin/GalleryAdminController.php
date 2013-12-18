@@ -15,9 +15,21 @@ use Zend\View\Model\ViewModel;
 class GalleryAdminController extends AbstractActionController
 {
 
+    /**
+    * @var $mediaService Service de l'entity media
+    */
     protected $mediaService;
+
+    /**
+    * @var $categoryService Service de l'entity category
+    */
     protected $categoryService;
 
+    /**
+    * liste des médias d'un Média 
+    *
+    * @return ViewModel Templates de la liste des medias
+    */
     public function indexAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -36,6 +48,11 @@ class GalleryAdminController extends AbstractActionController
         return new ViewModel(compact('medias', 'categories', 'formMedia', 'formCategory', 'user'));
     }
 
+    /**
+    * Création d'un Média 
+    *
+    * @redirect vers la liste des medias
+    */
     public function createAction()
     {
         $form = $this->getServiceLocator()->get('playgroundgallery_media_form');
@@ -62,6 +79,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
 
+    /**
+    * Edition d'un Média 
+    *
+    * @redirect vers la liste des medias
+    */
     public function editAction()
     {
         $mediaId = $this->getEvent()->getRouteMatch()->getParam('mediaId');
@@ -94,6 +116,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
 
+    /**
+    * Vérifie la validité d'une url 
+    *
+    * @return boolean $headersBool validité de l'url
+    */
     public function checkValidUrl($url) {
         $handle = curl_init($url);
 
@@ -112,6 +139,11 @@ class GalleryAdminController extends AbstractActionController
         return $headersBool;
     }
 
+    /**
+    * Suppression d'un Média 
+    *
+    * @redirect vers la liste des medias
+    */
     public function removeAction() {
         $mediaId = $this->getEvent()->getRouteMatch()->getParam('mediaId');
         if (!$mediaId) {
@@ -125,6 +157,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
 
+    /**
+    * Téléchargement d'un media
+    *
+    * @redirect vers la liste des medias
+    */
     public function downloadAction()
     {
         $mediaId = $this->getEvent()->getRouteMatch()->getParam('mediaId');
@@ -161,6 +198,11 @@ class GalleryAdminController extends AbstractActionController
         return $response;
     }
 
+    /**
+    * Creation d'une Categorie 
+    *
+    * @redirect vers la liste des medias
+    */
     public function createCategoryAction() {
         $form = $this->getServiceLocator()->get('playgroundgallery_category_form');
         $form->setAttribute('method', 'post');
@@ -180,6 +222,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
 
+    /**
+    * Edition d'une Categorie 
+    *
+    * @redirect vers la liste des medias
+    */
     public function editCategoryAction() {
         $categoryId = $this->getEvent()->getRouteMatch()->getParam('categoryId');
         if (!$categoryId) {
@@ -211,6 +258,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
 
+    /**
+    * Suppresion d'une Categorie 
+    *
+    * @redirect vers la liste des medias
+    */
     public function removeCategoryAction() {
         $categoryId = $this->getEvent()->getRouteMatch()->getParam('categoryId');
         if (!$categoryId) {
@@ -218,7 +270,7 @@ class GalleryAdminController extends AbstractActionController
         }
         $category = $this->getCategoryService()->getCategoryMapper()->findByid($categoryId);
         
-        if(count($category->getChildren())==0) {
+        if(count($category->getChildren())==0 && count($category->getMedias())==0) {
             $category = $this->getCategoryService()->getCategoryMapper()->remove($category);
         } else {
             $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error : you can\'t remove a category who contains one or more categories.');
@@ -226,6 +278,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin/playgroundgallery');
     }
     
+    /**
+    * Recuperation du Service Category
+    *
+    * @return PlaygroundGallery\Service\Category $categoryService
+    */
     public function getCategoryService()
     {
         if (!$this->categoryService) {
@@ -234,6 +291,11 @@ class GalleryAdminController extends AbstractActionController
         return $this->categoryService;
     }
 
+    /**
+    * Recuperation du Service Media
+    *
+    * @return PlaygroundGallery\Service\Media $mediaService
+    */
     public function getMediaService()
     {
         if (!$this->mediaService) {
