@@ -90,6 +90,10 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         $form->bind($media);
 
         $form->setData($data);
+        $media->setDescription($data['description']);
+        $media->setName($data['name']);
+        $media->setCredit($data['credit']);
+        $media->setUrl($data['url']);
 
         if (!$form->isValid()) {
             return false;
