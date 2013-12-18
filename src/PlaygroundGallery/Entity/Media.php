@@ -256,9 +256,6 @@ class Media implements InputFilterAwareInterface
         if (isset($data['description']) && $data['description'] != null) {
             $this->description = $data['description'];
         }
-        if (isset($data['category']) && $data['category'] != null) {
-            $this->category = $data['category'];
-        }
     }
 
 

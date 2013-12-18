@@ -27,6 +27,11 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
     protected $serviceManager;
 
     /**
+     * @var mediaForm
+     */
+    protected $mediaForm;
+
+    /**
      * @var categoryMapper
      */
     protected $categoryMapper;
@@ -52,7 +57,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         $media->populate($data);
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
 
-        $form = $this->getServiceManager()->get('playgroundgallery_media_form');
+        $form = $this->getMediaForm();
 
         $this->addCategory($media, $data);
 
@@ -83,17 +88,14 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
     {
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
 
-        $form  = $this->getServiceManager()->get('playgroundgallery_media_form');
+        $form  = $this->getMediaForm();
 
         $this->addCategory($media, $data);
 
         $form->bind($media);
 
         $form->setData($data);
-        $media->setDescription($data['description']);
-        $media->setName($data['name']);
-        $media->setCredit($data['credit']);
-        $media->setUrl($data['url']);
+        $media->populate($data);
 
         if (!$form->isValid()) {
             return false;
@@ -137,7 +139,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
      */
     public function setMediaMapper($mediaMapper)
     {
-        $this->mediaMapper = $mediaMappers;
+        $this->mediaMapper = $mediaMapper;
 
         return $this;
     }
@@ -207,7 +209,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * setCompanyMapper
+     * setCategoryMapper
      * @param  CategoryMapper $companyMapper
      *
      * @return PlaygroundGallery\Entity\Category Category
@@ -215,6 +217,33 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
     public function setCategoryMapper($categoryMapper)
     {
         $this->categoryMapper = $categoryMappers;
+
+        return $this;
+    }
+
+    /**
+     * getMediaForm
+     *
+     * @return mediaForm
+     */
+    public function getMediaForm()
+    {
+        if (null === $this->mediaForm) {
+            $this->mediaForm = $this->getServiceManager()->get('playgroundgallery_media_form');
+        }
+
+        return $this->mediaForm;
+    }
+
+    /**
+     * setMediaForm
+     * @param  PlaygroundGallery\Form\Media $mediaForm
+     *
+     * @return PlaygroundGallery\Service\Media this
+     */
+    public function setMediaForm($mediaForm)
+    {
+        $this->mediaForm = $mediaForm;
 
         return $this;
     }
