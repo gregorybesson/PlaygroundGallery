@@ -101,6 +101,7 @@ class GalleryAdminController extends AbstractActionController
             $data = $this->getRequest()->getPost()->toArray();
             if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->edit($data, $media);
+                
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
                 }
@@ -208,9 +209,9 @@ class GalleryAdminController extends AbstractActionController
         $form->setAttribute('method', 'post');
 
         if ($this->getRequest()->isPost()) {
-            $contact = $this->getCategoryService()->create($this->getRequest()->getPost()->toArray());
+            $category = $this->getCategoryService()->create($this->getRequest()->getPost()->toArray());
             
-            if($contact) {
+            if($category) {
                 return $this->redirect()->toRoute('admin/playgroundgallery');
             }
             else {
@@ -239,16 +240,11 @@ class GalleryAdminController extends AbstractActionController
         $form->bind($category);
 
         if ($this->getRequest()->isPost()) {
-            $form->bind($this->getRequest()->getPost());
+
             $data = $this->getRequest()->getPost()->toArray();
-            if($form->isValid()) {
-                $category = $this->getCategoryService()->edit($data, $category);
-                if($category) {
-                    return $this->redirect()->toRoute('admin/playgroundgallery');
-                }
-                else {
-                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
-                }
+            $category = $this->getCategoryService()->edit($data, $category);
+            if($category) {
+                return $this->redirect()->toRoute('admin/playgroundgallery');
             }
             else {
                 $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');

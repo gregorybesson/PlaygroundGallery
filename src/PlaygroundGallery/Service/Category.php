@@ -32,6 +32,11 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
     protected $options;
 
     /**
+     * @var categoryForm
+     */
+    protected $categoryForm;
+
+    /**
      *
      * This service is ready for create a category
      *
@@ -46,7 +51,7 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
         $category->populate($data);
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
 
-        $form = $this->getServiceManager()->get('playgroundgallery_category_form');
+        $form = $this->getCategoryForm();
 
         $this->addCategoryParent($category, $data);
 
@@ -77,7 +82,7 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
     {
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
 
-        $form  = $this->getServiceManager()->get('playgroundgallery_category_form');
+        $form  = $this->getCategoryForm();
 
         $this->addCategoryParent($category, $data);
 
@@ -87,9 +92,7 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
 
         $category->setName($data['name']);
 
-        if (!$form->isValid()) {
-            return false;
-        }
+     
         $category = $this->getCategoryMapper()->update($category);
 
         return $category;
@@ -140,7 +143,7 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
      */
     public function setCategoryMapper($categoryMapper)
     {
-        $this->categoryMapper = $categoryMappers;
+        $this->categoryMapper = $categoryMapper;
 
         return $this;
     }
@@ -191,6 +194,33 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
     public function setServiceManager(ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+
+        return $this;
+    }
+
+    /**
+     * getCategoryForm
+     *
+     * @return categoryForm
+     */
+    public function getCategoryForm()
+    {
+        if (null === $this->categoryForm) {
+            $this->categoryForm = $this->getServiceManager()->get('playgroundgallery_category_form');
+        }
+
+        return $this->categoryForm;
+    }
+
+    /**
+     * setCategoryForm
+     * @param  PlaygroundGallery\Form\Category $categoryForm
+     *
+     * @return PlaygroundGallery\Service\Category this
+     */
+    public function setCategoryForm($categoryForm)
+    {
+        $this->categoryForm = $categoryForm;
 
         return $this;
     }
