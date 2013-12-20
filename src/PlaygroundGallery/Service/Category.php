@@ -27,11 +27,6 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
     protected $serviceManager;
 
     /**
-     * @var UserServiceOptionsInterface
-     */
-    protected $options;
-
-    /**
      * @var categoryForm
      */
     protected $categoryForm;
@@ -55,8 +50,9 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
 
         $this->addCategoryParent($category, $data);
 
-
-        $category = $this->addWebsite($category, $data['websites']);
+        if(array_key_exists('websites', $data)) {
+            $category = $this->addWebsite($category, $data['websites']);
+        }
 
         $form->bind($category);
         $form->setData($data);
@@ -146,33 +142,6 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
         $this->categoryMapper = $categoryMapper;
 
         return $this;
-    }
-
-    /**
-     * setOptions
-     * @param  ModuleOptions $options
-     *
-     * @return PlaygroundGallery\Service\Category $this
-     */
-    public function setOptions(ModuleOptions $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-    /**
-     * getOptions
-     *
-     * @return ModuleOptions $optins
-     */
-    public function getOptions()
-    {
-        if (!$this->options instanceof ModuleOptions) {
-            $this->setOptions($this->getServiceManager()->get('playgroundgallery_module_options'));
-        }
-
-        return $this->options;
     }
 
     /**

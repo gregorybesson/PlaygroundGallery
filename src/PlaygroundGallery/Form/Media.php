@@ -12,6 +12,7 @@ class Media extends ProvidesEventsForm
 {
 
     protected $serviceManager;
+    protected $categoryService;
 
     public function __construct ($name = null, ServiceManager $sm, Translator $translator)
     {
@@ -127,7 +128,7 @@ class Media extends ProvidesEventsForm
     }
 
     private function getCategories() {
-        $categories = $this->getServiceManager()->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));
+        $categories = $this->getCategoryService()->getCategoryMapper()->findBy(array('parent' => null));
         $categoriesForm = array();
         foreach ($categories as $category) {
             $this->getChildrenCategories($category, $categoriesForm);
@@ -167,6 +168,33 @@ class Media extends ProvidesEventsForm
     public function setServiceManager (ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+
+        return $this;
+    }
+
+    /**
+     * Retrieve category service instance
+     *
+     * @return CategoryService
+     */
+    public function getCategoryService ()
+    {
+        if (null === $this->categoryService) {
+            $this->categoryService = $this->getServiceManager()->get('playgroundgallery_category_service');
+        }
+
+        return $this->categoryService;
+    }
+
+    /**
+     * Set service category instance
+     *
+     * @param  ServiceManager $categoryService
+     * @return this
+     */
+    public function setCategoryService ($categoryService)
+    {
+        $this->categoryService = $categoryService;
 
         return $this;
     }

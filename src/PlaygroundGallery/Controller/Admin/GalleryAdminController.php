@@ -32,7 +32,14 @@ class GalleryAdminController extends AbstractActionController
     */
     public function indexAction()
     {
-        $user = $this->zfcUserAuthentication()->getIdentity();
+        $config = $this->getServiceLocator()->get('Config');
+        if(!array_key_exists('autorize_user', $config) || !$config['autorize_user']) {
+            $user = null;
+        }
+        else {
+            $user = $this->zfcUserAuthentication()->getIdentity();
+        }
+        
         $categories = $this->getCategoryService()->getCategoryMapper()->findBy(array('parent' => null));
         $medias = $this->getMediaService()->getMediaMapper()->findAll();
 

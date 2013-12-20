@@ -127,7 +127,6 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         if (null === $this->mediaMapper) {
             $this->mediaMapper = $this->getServiceManager()->get('playgroundgallery_media_mapper');
         }
-
         return $this->mediaMapper;
     }
 
@@ -216,7 +215,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
      */
     public function setCategoryMapper($categoryMapper)
     {
-        $this->categoryMapper = $categoryMappers;
+        $this->categoryMapper = $categoryMapper;
 
         return $this;
     }

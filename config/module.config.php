@@ -159,4 +159,5 @@ return array(
             ),
         ),
     ),
+    'autorize_user' => true,
 );
