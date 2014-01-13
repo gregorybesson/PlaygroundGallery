@@ -85,7 +85,6 @@ class Category extends ProvidesEventsForm
     */
     private function getWebsites()
     {
-        var_dump('hello');
         $websites = $this->getServiceManager()->get('playgroundcore_website_service')->getWebsiteMapper()->findAll();
         $websitesForm = array();
         foreach ($websites as $website) {
