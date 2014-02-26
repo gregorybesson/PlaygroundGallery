@@ -38,6 +38,7 @@ class MediaTest extends \PHPUnit_Framework_TestCase
             'credit' => 'CeciEstUnCredit',
             'url' => 'http://lorempixel.com/400/600/sports/2/',
             'description' => 'CeciEstUneDescription',
+            'poster'      =>  'http://lorempixel.com/400/600/sports/3/',
         );
 
         parent::setUp();
@@ -47,7 +48,6 @@ class MediaTest extends \PHPUnit_Framework_TestCase
     {
         $media = new MediaEntity();
         $media->populate($this->mediaData);
-
         // save data
         $this->em->persist($media);
         $this->em->flush();
@@ -55,6 +55,7 @@ class MediaTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->mediaData['name'], $media->getName());
         $this->assertEquals($this->mediaData['credit'], $media->getCredit());
         $this->assertEquals($this->mediaData['url'], $media->getUrl());
+        $this->assertEquals($this->mediaData['poster'], $media->getPoster());
         $this->assertEquals($this->mediaData['description'], $media->getDescription());
 
         return $media->getId();

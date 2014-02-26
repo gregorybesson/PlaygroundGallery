@@ -70,6 +70,22 @@ class Media extends ProvidesEventsForm
         ));
 
         $this->add(array(
+            'name' => 'poster',
+            'options' => array(
+                    'label' => $translator->translate('Poster', 'playgroundgallery'),
+            ),
+            'attributes' => array(
+                    'type' => 'text',
+                    'placeholder' => $translator->translate('Poster', 'playgroundgallery'),
+                    'required' => 'required',
+                    'class' => 'form-control'
+            ),
+            'validator' => array(
+                new \Zend\Validator\NotEmpty(),
+            )
+        ));
+
+        $this->add(array(
     		'name' => 'credit',
     		'options' => array(
     				'label' => $translator->translate('Credit', 'playgroundgallery'),
