@@ -57,6 +57,13 @@ class Media implements InputFilterAwareInterface
     protected $url;
 
     /**
+     * poster
+     * @ORM\Column(type="string", length=255, nullable=false)
+     */
+    protected $poster;
+
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected $created_at;
@@ -194,6 +201,25 @@ class Media implements InputFilterAwareInterface
     }
 
     /**
+     * @param string $poster
+     * @return Media
+     */
+    public function setPoster($poster)
+    {
+        $this->poster = (string) $poster;
+    
+        return $this;
+    }
+    
+    /**
+     * @return string $poster
+     */
+    public function getPoster()
+    {
+        return $this->poster;
+    }
+
+    /**
      * @return the unknown_type
      */
     public function getCreatedAt()
@@ -252,6 +278,9 @@ class Media implements InputFilterAwareInterface
         }
         if (isset($data['url']) && $data['url'] != null) {
         	$this->url = $data['url'];
+        }
+        if (isset($data['poster']) && $data['poster'] != null) {
+            $this->poster = $data['poster'];
         }
         if (isset($data['description']) && $data['description'] != null) {
             $this->description = $data['description'];
