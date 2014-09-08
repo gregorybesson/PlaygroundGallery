@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 
 class GalleryAdminController extends AbstractActionController
 {
-
+     const MAX_PER_PAGE = 20;
     /**
     * @var $mediaService Service de l'entity media
     */
@@ -32,27 +32,93 @@ class GalleryAdminController extends AbstractActionController
     */
     public function indexAction()
     {
-        $config = $this->getServiceLocator()->get('Config');
-        if(!array_key_exists('autorize_user', $config) || !$config['autorize_user']) {
-            $user = null;
+        $filters = array();
+        $order = 'ASC';
+        $request = $this->getRequest();        
+        $filtersGet = $this->getEvent()->getRouteMatch()->getParam('filters');
+        if (!empty($filtersGet)) {
+            $filters = unserialize(urldecode($filtersGet)); 
+            $page = $this->getEvent()->getRouteMatch()->getParam('p');
         }
-        else {
+        if(empty($page)){
+            $page = 1;
+        }
+       
+        if ($request->isPost()) {
+            $data = array_merge(
+                    $request->getPost()->toArray(),
+                    $request->getFiles()->toArray()
+            );
+            if(!empty($data["filters"])) {
+                if(!empty($data["filters"]['type'])) {
+                    $filters['type'] = $data["filters"]['type'];
+                } 
+                if(!empty($data["filters"]['category'])) {
+                    $filters['category'] = $data["filters"]['category'];
+                }   
+                if(!empty($data["filters"]['order'])) {
+                    $order = $data["filters"]['order'];
+                    $filters['order'] = $order;
+                }   
+            }
+        }
+        $config = $this->getServiceLocator()->get('Config');
+        if (!array_key_exists('autorize_user', $config) || !$config['autorize_user']) {
+            $user = null;
+        } else {
             $user = $this->zfcUserAuthentication()->getIdentity();
         }
-        
+        if (!array_key_exists('arbo', $config) || !$config['arbo']) {
+            $arbo = null;
+        } else {
+            $arbo = $config['arbo'];
+        }
         $categories = $this->getCategoryService()->getCategoryMapper()->findBy(array('parent' => null));
-        $medias = $this->getMediaService()->getMediaMapper()->findAll();
-
-        // Form media
+        $allMedias = $this->getMediasFromSQL($filters, $order);
+        $nbResults = count($allMedias);
+        $medias = array_slice($allMedias, ($page-1)*self::MAX_PER_PAGE, self::MAX_PER_PAGE);
+       
+        $mediasPaginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($allMedias));
+        $mediasPaginator->setItemCountPerPage(self::MAX_PER_PAGE);
+        $mediasPaginator->setCurrentPageNumber($page);
         $formMedia = $this->getServiceLocator()->get('playgroundgallery_media_form');
         $formMedia->setAttribute('method', 'post');
-
-        // Form Category
         $formCategory = $this->getServiceLocator()->get('playgroundgallery_category_form');
         $formCategory->setAttribute('method', 'post');
         $formCategory->setAttribute('action', $this->url()->fromRoute('admin/playgroundgallery/category/create'));
+        $viewModel = new ViewModel();
+        return $viewModel->setVariables(array('medias' => $medias,'categories' => $categories,'formMedia' => $formMedia,'formCategory' => $formCategory,'user' => $user,'mediasPaginator' => $mediasPaginator,'nbResults' => $nbResults,'filters' => $filters));
+    }
+
+     public function getMediasFromSQL($filters, $order)
+    {
+        $entityManager = $this->getServiceLocator()->get('playgroundgallery_doctrine_em');
+
+        $select = " SELECT m ";
+        $from = " FROM PlaygroundGallery\Entity\Media m ";
+        $where = " WHERE  1 = 1";
+        $order = " ORDER BY m.name ".$order;
+
+        if(!empty($filters['category'])) {
+            $where .= " AND m.category = ".$filters['category'];
+        }
+
+        if(!empty($filters['type'])) {
+            if($filters['type'] == 'pictures'){
+               $where .= " AND m.url NOT LIKE '%youtube.com%'";  
+            }
+            if($filters['type'] == 'videos'){
+               $where .= " AND m.url LIKE '%youtube.com%'";  
+            }
+        }
+
+        $query = $select.$from.$where.$order;
+
+        $medias = $entityManager->createQuery($query)->getResult();
+
         
-        return new ViewModel(compact('medias', 'categories', 'formMedia', 'formCategory', 'user'));
+        
+        return $medias;
     }
 
     /**
