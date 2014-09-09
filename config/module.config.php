@@ -38,6 +38,17 @@ return array(
                         ),
                         'may_terminate' => true,
                         'child_routes' => array(
+                            'galleryPager' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                     'route' => '/gallery[/filters/:filters][/p/:p]',
+                                    'defaults' => array(
+                                        'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                        'action'     => 'index',
+                                    ),
+                                ),
+                            ),
+                            
                             'create' => array(
                                 'type' => 'Segment',
                                 'options' => array(
