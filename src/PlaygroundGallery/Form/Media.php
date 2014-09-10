@@ -7,6 +7,8 @@ use Zend\Form\Element;
 use ZfcBase\Form\ProvidesEventsForm;
 use Zend\Mvc\I18n\Translator;
 use Zend\ServiceManager\ServiceManager;
+use PlaygroundGallery\Entity\Media as MediaEntity;
+use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 
 class Media extends ProvidesEventsForm
 {
@@ -19,6 +21,11 @@ class Media extends ProvidesEventsForm
 
         parent::__construct($name);
         $this->setServiceManager($sm);
+        
+//         $this
+//             ->setHydrator(new ClassMethodsHydrator(false))
+//             ->setObject(new MediaEntity())
+//         ;
         
         $this->add(array(
             'name' => 'category',
@@ -130,6 +137,21 @@ class Media extends ProvidesEventsForm
             ),
         ));
         
+        $this->add(array(
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'tags',
+            'options' => array(
+                'label' => $translator->translate('tags', 'playgroundgallery'),
+                'value_options' => $this->getTags(),
+                'disable_inarray_validator' => true
+            ),
+            'attributes' => array(
+                'class' => 'form-control multiselect',
+                'multiple' => 'multiple',
+                'value' => array_keys($this->getTags()),
+            ),
+        ));
+        
         $submitElement = new Element\Button('submit');
         $submitElement->setLabel($translator->translate('Ok', 'playgroundgallery'))
             ->setAttributes(array(
@@ -141,6 +163,21 @@ class Media extends ProvidesEventsForm
             //'priority' => - 100
         ));
 
+    }
+    
+    /**
+     * Récupère la liste des tags
+     *
+     * @return array
+     */
+    private function getTags()
+    {
+        $tags = $this->getServiceManager()->get('playgroundgallery_tag_service')->getTagMapper()->findAll();
+        $tagForm = array();
+        foreach ($tags as $tag) {
+            $tagForm[$tag->getId()] = $tag->getName();
+        }
+        return $tagForm;
     }
 
     private function getCategories() {

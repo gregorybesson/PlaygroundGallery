@@ -143,6 +143,51 @@ return array(
                                     ),
                                 ),
                             ),
+                            'tag' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/tag'
+                                ),
+                                'may_terminate' => true,
+                                'child_routes' => array(
+                                    'create' => array(
+                                        'type' => 'Segment',
+                                        'options' => array(
+                                            'route' => '/create',
+                                            'defaults' => array(
+                                                'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                                'action'     => 'createTag',
+                                            ),
+                                        ),
+                                    ),
+                                    'edit' => array(
+                                        'type' => 'Segment',
+                                        'options' => array(
+                                            'route' => '/edit[/:tagId]',
+                                            'defaults' => array(
+                                                'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                                'action'     => 'editTag',
+                                            ),
+                                            'constraints' => array(
+                                                'tagId' => '[0-9]*',
+                                            ),
+                                        ),
+                                    ),
+                                    'remove' => array(
+                                        'type' => 'Segment',
+                                        'options' => array(
+                                            'route' => '/remove[/:tagId]',
+                                            'defaults' => array(
+                                                'controller' => 'PlaygroundGallery\Controller\Admin\GalleryAdmin',
+                                                'action'     => 'removeTag',
+                                            ),
+                                            'constraints' => array(
+                                                'tagId' => '[0-9]*',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),

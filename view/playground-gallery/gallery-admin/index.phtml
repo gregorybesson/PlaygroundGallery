@@ -54,6 +54,12 @@
         </div>
         <br /><br />
         <a data-toggle="modal" href="#modal_create_category" type="button" class="btn btn-primary btn-sm"><?php echo $this->translate('Add a Category'); ?></a>
+        <br /><br />
+        <div id="menu-tags">
+            <?php $this->printTagTree(); ?>
+        </div>
+        <br /><br />
+        <a data-toggle="modal" href="#modal_create_tag" type="button" class="btn btn-primary btn-sm"><?php echo $this->translate('Add a Tag'); ?></a>
     </div>
     <div class="col-md-9">
         <?php if(count($medias) == 0 ): ?>
@@ -229,6 +235,11 @@
                                     <?php echo $this->formSelect($formMedia->get('category')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('category')) ?>
                                 </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('tags')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('tags')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('tags')) ?>
+                                </div>
                                 
                                 <div class='pull-right margin-right30'>
                                     
@@ -244,6 +255,39 @@
                     <div class="modal-footer">
                         <?php $formMedia->get('submit')->setLabel($this->translate('Create')); ?>
                         <?php echo $this->formButton($formMedia->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        
+        <div class="modal fade" id="modal_create_tag" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new tag'); ?></h4>
+                    </div>
+                    <?php $formTag = $this->formTag ?>
+                    <?php $formTag->bind(new PlaygroundGallery\Entity\Tag()) ?>
+                    <?php $formTag->setAttribute('action', $this->url('admin/playgroundgallery/tag/create')) ?>
+                    <?php $formTag->prepare();?>
+                    <?php echo $this->form()->openTag($formTag); ?>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('name')); ?>
+                            <?php echo $this->formInput($formTag->get('name')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('parent')); ?>
+                            <?php echo $this->formSelect($formTag->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('parent')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php $formTag->get('submit')->setLabel($this->translate('Create')); ?>
+                        <?php echo $this->formButton($formTag->get('submit')) ?>
                         <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
                     </div>
                     <?php echo $this->form()->closeTag() ?>
@@ -305,6 +349,43 @@
             </div>
             <?php endforeach; ?>
         </div>
+        
+        <?php foreach ($this->getTags() as $tag): ?>
+        <div class="modal fade" id="modal_edit_tag_<?php echo $tag->getId() ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a tag'); ?></h4>
+                    </div>
+
+                    <?php $formTag->bind($tag) ?>
+                    <?php $formTag->setAttribute('action', $this->url('admin/playgroundgallery/tag/edit', array('tagId' => $tag->getId()))) ?>
+                    <?php $formTag->prepare();?>
+                    <?php echo $this->form()->openTag($formTag); ?>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('name')); ?>
+                            <?php echo $this->formInput($formTag->get('name')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('parent')); ?>
+                            <?php echo $this->formSelect($formTag->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('parent')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="<?php echo $this->url('admin/playgroundgallery/tag/remove', array('tagId' => $tag->getId())) ?>"><button type="button" class="btn btn-danger pull-left"><?php echo $this->translate('Remove') ?></button></a>
+                        <?php $formTag->get('submit')->setLabel($this->translate('Edit')); ?>
+                        <?php echo $this->formButton($formTag->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <?php endforeach ?>
 
         <?php foreach ($categoriesByUser as $category): ?>
         <div class="modal fade" id="modal_edit_category_<?php echo $category->getId() ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

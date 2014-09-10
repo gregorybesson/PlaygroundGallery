@@ -62,6 +62,15 @@ class Media implements InputFilterAwareInterface
      */
     protected $poster;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     * @ORM\ManyToMany(targetEntity="PlaygroundGallery\Entity\Tag")
+     * @ORM\JoinTable(name="gallery_media_tag",
+     *      joinColumns={@ORM\JoinColumn(name="media_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
+     * )
+     */
+    protected $tags;
 
     /**
      * @ORM\Column(type="datetime")
@@ -72,6 +81,11 @@ class Media implements InputFilterAwareInterface
      * @ORM\Column(type="datetime")
      */
     protected $updated_at;
+    
+    public function __construct()
+    {
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * @param string $id
@@ -254,6 +268,29 @@ class Media implements InputFilterAwareInterface
 
         return $this;
     }
+    
+    
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+    }
+    
+   
+    public function getTags()
+    {
+        return $this->tags;
+    }
+    
+    public function addTag($tag)
+    {
+        $this->tags[] = $tag;
+    }
+    
+    public function removeTag(){
+        $this->tags = new ArrayCollection();
+    
+        return $this;
+    }
 
     public function getArrayCopy ()
     {
@@ -311,4 +348,5 @@ class Media implements InputFilterAwareInterface
         }
         return $this->inputFilter;
     }
+    
 }

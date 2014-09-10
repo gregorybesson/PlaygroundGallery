@@ -19,6 +19,7 @@ class GalleryAdminController extends AbstractActionController
     * @var $mediaService Service de l'entity media
     */
     protected $mediaService;
+    protected $tagService;
 
     /**
     * @var $categoryService Service de l'entity category
@@ -83,11 +84,14 @@ class GalleryAdminController extends AbstractActionController
         $mediasPaginator->setCurrentPageNumber($page);
         $formMedia = $this->getServiceLocator()->get('playgroundgallery_media_form');
         $formMedia->setAttribute('method', 'post');
+        $formTag = $this->getServiceLocator()->get('playgroundgallery_tag_form');
+        $formTag->setAttribute('method', 'post');
+        $formTag->setAttribute('action', $this->url()->fromRoute('admin/playgroundgallery/tag/create'));
         $formCategory = $this->getServiceLocator()->get('playgroundgallery_category_form');
         $formCategory->setAttribute('method', 'post');
         $formCategory->setAttribute('action', $this->url()->fromRoute('admin/playgroundgallery/category/create'));
         $viewModel = new ViewModel();
-        return $viewModel->setVariables(array('medias' => $medias,'categories' => $categories,'formMedia' => $formMedia,'formCategory' => $formCategory,'user' => $user,'mediasPaginator' => $mediasPaginator,'nbResults' => $nbResults,'filters' => $filters));
+        return $viewModel->setVariables(array('medias' => $medias,'categories' => $categories,'formMedia' => $formMedia, 'formTag' => $formTag, 'formCategory' => $formCategory,'user' => $user,'mediasPaginator' => $mediasPaginator,'nbResults' => $nbResults,'filters' => $filters));
     }
 
      public function getMediasFromSQL($filters, $order)
@@ -138,6 +142,11 @@ class GalleryAdminController extends AbstractActionController
             if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->create($data);
                 if($media) {
+                    foreach ($this->getRequest()->getPost('tags') as $tagId) {
+                        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
+                        $media->addTag($tag);
+                    }
+                    $this->getMediaService()->getMediaMapper()->update($media);
                     return $this->redirect()->toRoute('admin/playgroundgallery');
                 }
                 else {
@@ -348,6 +357,82 @@ class GalleryAdminController extends AbstractActionController
     }
     
     /**
+     * Creation d'un tag
+     *
+     * @redirect vers la liste des medias
+     */
+    public function createTagAction() {
+        $form = $this->getServiceLocator()->get('playgroundgallery_tag_form');
+        $form->setAttribute('method', 'post');
+    
+        if ($this->getRequest()->isPost()) {
+            $exists = $this->getTagService()->getTagMapper()->findBy(array('name' => $this->getRequest()->getPost('name')));
+            if (count($exists)) {
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('A tag already exists with the same name');
+                return $this->redirect()->toRoute('admin/playgroundgallery');
+            }
+            $tag = $this->getTagService()->create($this->getRequest()->getPost()->toArray());
+
+            if($tag) {
+                return $this->redirect()->toRoute('admin/playgroundgallery');
+            }
+            else {
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+            }
+    
+        }
+    
+        return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
+    
+    /**
+     * Edition d'un tag
+     *
+     * @redirect vers la liste des medias
+     */
+    public function editTagAction() {
+        $tagId = $this->getEvent()->getRouteMatch()->getParam('tagId');
+        if (!$tagId) {
+            return $this->redirect()->toRoute('admin/playgroundgallery');
+        }
+        $tag = $this->getTagService()->getTagMapper()->findByid($tagId);
+    
+    
+        $form = $this->getServiceLocator()->get('playgroundgallery_tag_form');
+        $form->bind($tag);
+    
+        if ($this->getRequest()->isPost()) {
+    
+            $data = $this->getRequest()->getPost()->toArray();
+            $tag = $this->getTagService()->edit($data, $tag);
+            if($tag) {
+                return $this->redirect()->toRoute('admin/playgroundgallery');
+            }
+            else {
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+            }
+        }
+    
+        return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
+    
+    /**
+     * Suppresion d'un tag
+     *
+     * @redirect vers la liste des medias
+     */
+    public function removeTagAction() {
+        $tagId = $this->getEvent()->getRouteMatch()->getParam('tagId');
+        if (!$tagId) {
+            return $this->redirect()->toRoute('admin/playgroundgallery');
+        }
+        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
+    
+        $tag = $this->getTagService()->getTagMapper()->remove($tag);
+        return $this->redirect()->toRoute('admin/playgroundgallery');
+    }
+    
+    /**
     * Recuperation du Service Category
     *
     * @return PlaygroundGallery\Service\Category $categoryService
@@ -371,5 +456,13 @@ class GalleryAdminController extends AbstractActionController
             $this->mediaService = $this->getServiceLocator()->get('playgroundgallery_media_service');
         }
         return $this->mediaService;
+    }
+    
+    public function getTagService()
+    {
+        if (!$this->tagService) {
+            $this->tagService = $this->getServiceLocator()->get('playgroundgallery_tag_service');
+        }
+        return $this->tagService;
     }
 }
