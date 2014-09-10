@@ -68,6 +68,7 @@ class Tag implements InputFilterAwareInterface
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
     
     /**
@@ -84,11 +85,13 @@ class Tag implements InputFilterAwareInterface
     public function setName($name)
     {
         $this->id = $name;
+        return $this;
     }
     
     public function addMedia(Media $media)
     {
         $this->medias[] = $media;
+        return $this;
     }
     
     public function getChildren()
@@ -104,6 +107,7 @@ class Tag implements InputFilterAwareInterface
     public function setParent($parent)
     {
         $this->parent = $parent;
+        return $this;
     }
     
     /**
@@ -130,6 +134,7 @@ class Tag implements InputFilterAwareInterface
         if (isset($data['name']) && $data['name'] != null) {
             $this->name    = $data['name'];
         }
+        return $this;
     }
     
     /**

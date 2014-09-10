@@ -111,8 +111,7 @@ class Tag extends EventProvider implements ServiceManagerAwareInterface
         $parent = $this->getTagMapper()->findById($data['parent']);
 
         $tag->setParent($parent);
-
-        return $tag;
+        return $this;
     }
     
     /**
@@ -177,6 +176,12 @@ class Tag extends EventProvider implements ServiceManagerAwareInterface
         }
 
         return $this->tagMapper;
+    }
+    
+    public function setTagMapper($tagMapper)
+    {
+        $this->tagMapper = $tagMapper;
+        return $this;
     }
 
     /**

@@ -395,7 +395,7 @@ class GalleryAdminController extends AbstractActionController
         if (!$tagId) {
             return $this->redirect()->toRoute('admin/playgroundgallery');
         }
-        $tag = $this->getTagService()->getTagMapper()->findByid($tagId);
+        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
     
     
         $form = $this->getServiceLocator()->get('playgroundgallery_tag_form');
