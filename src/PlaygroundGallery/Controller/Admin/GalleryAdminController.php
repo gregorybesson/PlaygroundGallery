@@ -142,6 +142,7 @@ class GalleryAdminController extends AbstractActionController
             if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->create($data);
                 if($media) {
+                    $media->removeTag();
                     foreach ($this->getRequest()->getPost('tags') as $tagId) {
                         $tag = $this->getTagService()->getTagMapper()->findById($tagId);
                         $media->addTag($tag);
@@ -172,7 +173,7 @@ class GalleryAdminController extends AbstractActionController
         if (!$mediaId) {
             return $this->redirect()->toRoute('admin/playgroundgallery');
         }
-        $media = $this->getMediaService()->getMediaMapper()->findByid($mediaId);
+        $media = $this->getMediaService()->getMediaMapper()->findById($mediaId);
 
 
         $form = $this->getServiceLocator()->get('playgroundgallery_media_form');
@@ -183,6 +184,15 @@ class GalleryAdminController extends AbstractActionController
             $data = $this->getRequest()->getPost()->toArray();
             if($form->isValid() && $this->checkValidUrl($data['url'])) {
                 $media = $this->getMediaService()->edit($data, $media);
+                
+                if($media) {
+                    $media->removeTag();
+                    foreach ($this->getRequest()->getPost('tags') as $tagId) {
+                        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
+                        $media->addTag($tag);
+                    }
+                    $this->getMediaService()->getMediaMapper()->update($media);
+                }
                 
                 if($media) {
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -233,7 +243,7 @@ class GalleryAdminController extends AbstractActionController
             return $this->redirect()->toRoute('admin/playgroundgallery/create');
         }
 
-        $media = $this->getMediaService()->getMediaMapper()->findByid($mediaId);
+        $media = $this->getMediaService()->getMediaMapper()->findById($mediaId);
 
         $this->getMediaService()->getMediaMapper()->remove($media);
 
@@ -252,7 +262,7 @@ class GalleryAdminController extends AbstractActionController
             return $this->redirect()->toRoute('admin/playgroundgallery/create');
         }
 
-        $media = $this->getMediaService()->getMediaMapper()->findByid($mediaId);
+        $media = $this->getMediaService()->getMediaMapper()->findById($mediaId);
 
         foreach (get_headers($media->getUrl()) as $value) {
             if(preg_match('%Content-Type%', $value)) {
@@ -315,7 +325,7 @@ class GalleryAdminController extends AbstractActionController
         if (!$categoryId) {
             return $this->redirect()->toRoute('admin/playgroundgallery');
         }
-        $category = $this->getCategoryService()->getCategoryMapper()->findByid($categoryId);
+        $category = $this->getCategoryService()->getCategoryMapper()->findById($categoryId);
 
 
         $form = $this->getServiceLocator()->get('playgroundgallery_category_form');
@@ -346,7 +356,7 @@ class GalleryAdminController extends AbstractActionController
         if (!$categoryId) {
             return $this->redirect()->toRoute('admin/playgroundgallery');
         }
-        $category = $this->getCategoryService()->getCategoryMapper()->findByid($categoryId);
+        $category = $this->getCategoryService()->getCategoryMapper()->findById($categoryId);
         
         if(count($category->getChildren())==0 && count($category->getMedias())==0) {
             $category = $this->getCategoryService()->getCategoryMapper()->remove($category);

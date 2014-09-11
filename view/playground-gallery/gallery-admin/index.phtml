@@ -127,7 +127,13 @@
                             <?php $formMedia->setAttribute('action', $this->url('admin/playgroundgallery/edit', array('mediaId' => $media->getId()))) ?>
                             <?php $formMedia->bind($media);?>
                             <?php $formMedia->get('category')->setValue($media->getCategory()->getId()); ?>
-
+                            
+                            <?php $ids = array(); ?>
+                            <?php foreach ($media->getTags() as $tag) :?>
+                                <?php $ids[] = $tag->getId(); ?>
+                            <?php endforeach;?>
+                            <?php $formMedia->get('tags')->setValue($ids); ?>
+                            
                             <?php $isArbo = false; ?>
                             <?php if(!empty($mediaArbo[$media->getId()])): ?>
                             <?php $isArbo = true; ?>
@@ -170,6 +176,11 @@
                                     <?php echo $this->formLabel($formMedia->get('category')); ?>
                                     <?php echo $this->formSelect($formMedia->get('category')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('category')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('tags')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('tags')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('tags')) ?>
                                 </div>
                                 <div class='pull-right margin-right30'>
                                     
