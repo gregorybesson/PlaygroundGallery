@@ -287,7 +287,7 @@ class Media implements InputFilterAwareInterface
     }
     
     public function removeTag(){
-        $this->tags = new ArrayCollection();
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
     
         return $this;
     }
