@@ -29,19 +29,19 @@ class GalleryController extends AbstractActionController
         $response = $this->getResponse();
         $response->setStatusCode(200);
 
-        $country = strtolower($this->getEvent()->getRouteMatch()->getParam('country'));
+//         $country = strtolower($this->getEvent()->getRouteMatch()->getParam('country'));
         $offset = strtolower($this->getEvent()->getRouteMatch()->getParam('offset'));
         $limit = strtolower($this->getEvent()->getRouteMatch()->getParam('limit'));
         $tag = strtolower($this->getEvent()->getRouteMatch()->getParam('tag'));
         $type = strtolower($this->getEvent()->getRouteMatch()->getParam('type'));
 
-        if (empty($country)) {
-            $return['status'] = 1;
-            $return['message'] = "invalid argument : country is required";
-            $response->setContent(json_encode($return));
+//         if (empty($country)) {
+//             $return['status'] = 1;
+//             $return['message'] = "invalid argument : country is required";
+//             $response->setContent(json_encode($return));
         
-            return $response;
-        }
+//             return $response;
+//         }
 
         $websites = $this->getServiceLocator()->get('playgroundcore_website_service')->getWebsiteMapper()->findBy(array('code' => strtoupper($country)));
         if (count($websites) == 0) {
@@ -68,10 +68,11 @@ class GalleryController extends AbstractActionController
         $qb = $em->createQueryBuilder();
         $qb->select('m AS media', '(CASE WHEN (m.url LIKE \'%youtube.com%\') THEN \'video\' ELSE \'picture\' END) AS type')
                 ->from('PlaygroundGallery\Entity\Media', 'm')
-                ->innerJoin('m.category', 'c', \Doctrine\ORM\Query\Expr\Join::WITH)
-                ->innerJoin('c.websites', 'w', \Doctrine\ORM\Query\Expr\Join::WITH, 'w.code = :code');
+//                 ->innerJoin('m.category', 'c', \Doctrine\ORM\Query\Expr\Join::WITH)
+//                 ->innerJoin('c.websites', 'w', \Doctrine\ORM\Query\Expr\Join::WITH, 'w.code = :code')
+        ;
         
-        $bind = array('code' => $country);
+//         $bind = array('code' => $country);
         
         if ($tag && is_numeric($tag)) {
             $qb->innerJoin(

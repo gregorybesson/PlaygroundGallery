@@ -192,41 +192,43 @@ return array(
                     ),
                 ),
             ),
-            'api' => array(
-                'type' => 'segment',
-                'options' => array(
-                    'route' => '/api',
-                    'defaults' => array(
-                        'controller' => 'PlaygroundGallery\Controller\Api\Api',
-                        'action'     => 'index',
-                    ),
-                ),
-                'child_routes' => array(
-                    'list' =>  array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => '/list',
-                            'defaults' => array(
-                                'controller' => 'PlaygroundGallery\Controller\Api\Api',
-                                'action'     => 'index',
-                            ),
+            'frontend' => array(
+                'api' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/api',
+                        'defaults' => array(
+                            'controller' => 'PlaygroundGallery\Controller\Api\Api',
+                            'action'     => 'index',
                         ),
-            
                     ),
-                    'gallery' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => '/gallery/country/:country[/offset/:offset][/limit/:limit][/tag/:tag][/type/:type]',
-                            'constraints' => array(
-                                'offset' => '[0-9]*',
-                                'tag' => '[0-9]*',
-                                'type' => '[a-z]*',
-                                'limit' => '[0-9]*',
-                                'country' => '[a-z]*',
+                    'child_routes' => array(
+                        'list' =>  array(
+                            'type' => 'Segment',
+                            'options' => array(
+                                'route' => '/list',
+                                'defaults' => array(
+                                    'controller' => 'PlaygroundGallery\Controller\Api\Api',
+                                    'action'     => 'index',
+                                ),
                             ),
-                            'defaults' => array(
-                                'controller' => 'PlaygroundGallery\Controller\Api\Gallery',
-                                'action'     => 'list',
+                
+                        ),
+                        'gallery' => array(
+                            'type' => 'Segment',
+                            'options' => array(
+                                'route' => '/gallery[/offset/:offset][/limit/:limit][/tag/:tag][/type/:type]',
+                                'constraints' => array(
+                                    'offset' => '[0-9]*',
+                                    'tag' => '[0-9]*',
+                                    'type' => '[a-z]*',
+                                    'limit' => '[0-9]*',
+                                    'country' => '[a-z]*',
+                                ),
+                                'defaults' => array(
+                                    'controller' => 'PlaygroundGallery\Controller\Api\Gallery',
+                                    'action'     => 'list',
+                                ),
                             ),
                         ),
                     ),
