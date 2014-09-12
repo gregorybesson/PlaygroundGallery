@@ -43,16 +43,14 @@ class GalleryController extends AbstractActionController
 //             return $response;
 //         }
 
-        $websites = $this->getServiceLocator()->get('playgroundcore_website_service')->getWebsiteMapper()->findBy(array('code' => strtoupper($country)));
-        if (count($websites) == 0) {
-            $return['status'] = 1;
-            $return['message'] = "invalid argument : country is not verified";
-            $response->setContent(json_encode($return));
+//         $websites = $this->getServiceLocator()->get('playgroundcore_website_service')->getWebsiteMapper()->findBy(array('code' => strtoupper($country)));
+//         if (count($websites) == 0) {
+//             $return['status'] = 1;
+//             $return['message'] = "invalid argument : country is not verified";
+//             $response->setContent(json_encode($return));
         
-            return $response;
-        }
-
-        $website = $websites[0];
+//             return $response;
+//         }
 
         if (empty($offset)) {
             $offset = 0;
