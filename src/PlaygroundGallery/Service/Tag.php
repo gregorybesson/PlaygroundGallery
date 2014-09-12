@@ -168,7 +168,7 @@ class Tag extends EventProvider implements ServiceManagerAwareInterface
     /**
      * getCategoryMapper
      *
-     * @return CategoryMapper
+     * @return TagMapper
      */
     public function getTagMapper()
     {
@@ -177,6 +177,18 @@ class Tag extends EventProvider implements ServiceManagerAwareInterface
         }
 
         return $this->tagMapper;
+    }
+    
+    /**
+     * setCategoryMapper
+     * @param PlaygroundGallery\Mapper\Tag
+     *
+     * @return PlaygroundGallery\Service\Tag
+     */
+    public function setTagMapper($tagMapper)
+    {
+        $this->tagMapper = $tagMapper;
+        return $this;
     }
 
     /**

@@ -153,11 +153,21 @@
                                     <?php echo $this->formElementErrors($formMedia->get('name')) ?>
                                 </div>
                                 <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('upload_or_paste')) ?>
+                                </div>
+                                <div class="form-group upload">
+                                    <?php echo $this->formLabel($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formFile($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('uploadImage')) ?>
+                                </div>
+                                <div class="form-group paste_url">
                                     <?php echo $this->formLabel($formMedia->get('url')); ?>
                                     <?php echo $this->formInput($formMedia->get('url')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('url')) ?>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group paste_url">
                                     <?php echo $this->formLabel($formMedia->get('poster')); ?>
                                     <?php echo $this->formInput($formMedia->get('poster')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('poster')) ?>
@@ -221,12 +231,21 @@
                                     <?php echo $this->formElementErrors($formMedia->get('name')) ?>
                                 </div>
                                 <div class="form-group">
-                                    <?php $formMedia->get('url')->setAttributes(array('id' => 'urlform')) ?>
+                                    <?php echo $this->formLabel($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('upload_or_paste')) ?>
+                                </div>
+                                <div class="form-group upload">
+                                    <?php echo $this->formLabel($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formFile($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('uploadImage')) ?>
+                                </div>
+                                <div class="form-group paste_url">
                                     <?php echo $this->formLabel($formMedia->get('url')); ?>
                                     <?php echo $this->formInput($formMedia->get('url')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('url')) ?>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group paste_url">
                                     <?php echo $this->formLabel($formMedia->get('poster')); ?>
                                     <?php echo $this->formInput($formMedia->get('poster')); ?>
                                     <?php echo $this->formElementErrors($formMedia->get('poster')) ?>
