@@ -137,9 +137,23 @@ class GalleryAdminController extends AbstractActionController
         $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundgallery/create'));
 
         if ($this->getRequest()->isPost()) {
+            $data = array_merge(
+                $this->getRequest()->getPost()->toArray(),
+                $this->getRequest()->getFiles()->toArray()
+            );
+            
+            $checkUrl = true;
+            if (isset($data['upload_or_paste']) && $data['upload_or_paste'] == 'upload') {
+                $form->getInputFilter()->get('url')->setRequired(false);
+                $form->getInputFilter()->get('poster')->setRequired(false);
+                $checkUrl = false;
+            } else {
+                $form->getInputFilter()->get('uploadImage')->setRequired(false);
+            }
+            
             $form->bind($this->getRequest()->getPost());
-            $data = $this->getRequest()->getPost()->toArray();
-            if($form->isValid() && $this->checkValidUrl($data['url'])) {
+            
+            if($form->isValid() && (!$checkUrl || $this->checkValidUrl($data['url']))) {
                 $media = $this->getMediaService()->create($data);
                 if($media) {
                     $media->removeTag();
@@ -177,12 +191,23 @@ class GalleryAdminController extends AbstractActionController
 
 
         $form = $this->getServiceLocator()->get('playgroundgallery_media_form');
+        
         $form->bind($media);
 
         if ($this->getRequest()->isPost()) {
+            
+            $checkUrl = true;
+            if (isset($data['upload_or_paste']) && $data['upload_or_paste'] == 'upload') {
+                $form->getInputFilter()->get('url')->setRequired(false);
+                $form->getInputFilter()->get('poster')->setRequired(false);
+                $checkUrl = false;
+            } else {
+                $form->getInputFilter()->get('uploadImage')->setRequired(false);
+            }
+            
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
-            if($form->isValid() && $this->checkValidUrl($data['url'])) {
+            if($form->isValid() && (!$checkUrl || $this->checkValidUrl($data['url']))) {
                 $media = $this->getMediaService()->edit($data, $media);
                 
                 if($media) {

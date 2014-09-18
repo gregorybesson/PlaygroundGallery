@@ -22,10 +22,7 @@ class Media extends ProvidesEventsForm
         parent::__construct($name);
         $this->setServiceManager($sm);
         
-//         $this
-//             ->setHydrator(new ClassMethodsHydrator(false))
-//             ->setObject(new MediaEntity())
-//         ;
+        $this->setAttribute('enctype','multipart/form-data');
         
         $this->add(array(
             'name' => 'category',
@@ -59,6 +56,30 @@ class Media extends ProvidesEventsForm
             )
         ));
         
+        $this->add(array(
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'upload_or_paste',
+            'options' => array(
+                'label' => $translator->translate('Upload image or paste url', 'playgroundgallery'),
+                'value_options' => array(
+                    'paste_url'      => $translator->translate('Past url', 'playgroundgallery'),
+                    'upload'        => $translator->translate('Upload image', 'playgroundgallery'),
+                ),
+            ),
+            'attributes' => array(
+                'class' => 'form-control',
+            ),
+        ));
+        
+        $this->add(array(
+            'name' => 'uploadImage',
+            'attributes' => array(
+                'type'  => 'file',
+            ),
+            'options' => array(
+                'label' => $translator->translate('Image', 'playgroundgallery'),
+            ),
+        ));
         
         $this->add(array(
     		'name' => 'url',

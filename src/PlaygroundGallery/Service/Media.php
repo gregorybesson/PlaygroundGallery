@@ -67,10 +67,12 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         if (!$form->isValid()) {
             return false;
         }
+        
+        $this->uploadImage($media, $data);
 
         $mediaMapper = $this->getMediaMapper();
         $media = $mediaMapper->insert($media);
-
+        
         return $media;
     }
 
@@ -100,8 +102,11 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         if (!$form->isValid()) {
             return false;
         }
+        
+        $this->uploadImage($media, $data);
+        
         $media = $this->getMediaMapper()->update($media);
-
+        
         return $media;
     }
 
@@ -246,4 +251,24 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
 
         return $this;
     }
+    
+    public function uploadImage($media, $data)
+    {
+        if (!empty($data['uploadImage']['tmp_name'])) {
+            $path = getcwd() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR .  'media' . DIRECTORY_SEPARATOR . 'gallery' . DIRECTORY_SEPARATOR;
+            if (!is_dir($path)) {
+                mkdir($path,0777, true);
+            }
+            
+            $helper = $this->getServiceManager()->get('ViewHelperManager')->get('ServerUrl');
+            $media_url = $helper->__invoke('/frontend/images/gallery/');
+
+            move_uploaded_file($data['uploadImage']['tmp_name'], $path . $media->getId() . "-" . $data['uploadImage']['name']);
+            $url = $media_url . $media->getId() . "-" . $data['uploadImage']['name'];
+            $media->setUrl($url);
+            $media->setPoster($url);
+        }
+        return $media;
+    }
+    
 }

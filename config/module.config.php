@@ -192,6 +192,48 @@ return array(
                     ),
                 ),
             ),
+            'frontend' => array(
+                'api' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/api',
+                        'defaults' => array(
+                            'controller' => 'PlaygroundGallery\Controller\Api\Api',
+                            'action'     => 'index',
+                        ),
+                    ),
+                    'child_routes' => array(
+                        'list' =>  array(
+                            'type' => 'Segment',
+                            'options' => array(
+                                'route' => '/list',
+                                'defaults' => array(
+                                    'controller' => 'PlaygroundGallery\Controller\Api\Api',
+                                    'action'     => 'index',
+                                ),
+                            ),
+                
+                        ),
+                        'gallery' => array(
+                            'type' => 'Segment',
+                            'options' => array(
+                                'route' => '/gallery[/offset/:offset][/limit/:limit][/tag/:tag][/type/:type]',
+                                'constraints' => array(
+                                    'offset' => '[0-9]*',
+                                    'tag' => '[0-9]*',
+                                    'type' => '[a-z]*',
+                                    'limit' => '[0-9]*',
+                                    'country' => '[a-z]*',
+                                ),
+                                'defaults' => array(
+                                    'controller' => 'PlaygroundGallery\Controller\Api\Gallery',
+                                    'action'     => 'list',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -203,6 +245,8 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'PlaygroundGallery\Controller\Admin\GalleryAdmin'  => 'PlaygroundGallery\Controller\Admin\GalleryAdminController',
+            'PlaygroundGallery\Controller\Api\Gallery'  => 'PlaygroundGallery\Controller\Api\GalleryController',
+            'PlaygroundGallery\Controller\Api\Api'  => 'PlaygroundGallery\Controller\Api\ApiController',
         ),
     ),
     'navigation' => array(
@@ -216,4 +260,31 @@ return array(
         ),
     ),
     'autorize_user' => true,
+    'assetic_configuration' => array(
+        'modules' => array(
+            'playground_gallery' => array(
+                # module root path for your css and js files
+                'root_path' => array(
+                    __DIR__ . '/../view/lib/',
+                ),
+                # collection of assets
+                'collections' => array(
+                    'head_playgroundgallery_js' => array(
+                        'assets' => array(
+                            'admin.js' => 'js/playground_gallery.js',
+                        ),
+                        'options' => array(
+                            'output' => 'zfcadmin/js/head_playgroundgallery.js',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    
+        'routes' => array(
+            'admin.*' => array(
+                '@head_playgroundgallery_js'     => '@head_playgroundgallery_js',
+            ),
+        ),
+    ),
 );
