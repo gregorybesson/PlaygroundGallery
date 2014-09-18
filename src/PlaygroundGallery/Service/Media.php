@@ -255,7 +255,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
     public function uploadImage($media, $data)
     {
         if (!empty($data['uploadImage']['tmp_name'])) {
-            $path = getcwd() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR .  'frontend' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'gallery' . DIRECTORY_SEPARATOR;
+            $path = getcwd() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR .  'media' . DIRECTORY_SEPARATOR . 'gallery' . DIRECTORY_SEPARATOR;
             if (!is_dir($path)) {
                 mkdir($path,0777, true);
             }
