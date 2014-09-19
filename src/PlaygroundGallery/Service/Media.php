@@ -261,7 +261,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
             }
             
             $helper = $this->getServiceManager()->get('ViewHelperManager')->get('ServerUrl');
-            $media_url = $helper->__invoke('/frontend/images/gallery/');
+            $media_url = $helper->__invoke('/media/gallery/');
 
             move_uploaded_file($data['uploadImage']['tmp_name'], $path . $media->getId() . "-" . $data['uploadImage']['name']);
             $url = $media_url . $media->getId() . "-" . $data['uploadImage']['name'];

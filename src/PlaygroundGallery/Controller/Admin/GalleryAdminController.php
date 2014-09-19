@@ -158,8 +158,9 @@ class GalleryAdminController extends AbstractActionController
                 if($media) {
                     $media->removeTag();
                     foreach ($this->getRequest()->getPost('tags') as $tagId) {
-                        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
-                        $media->addTag($tag);
+                        if ($tag = $this->getTagService()->getTagMapper()->findById($tagId)) {
+                            $media->addTag($tag);
+                        }
                     }
                     $this->getMediaService()->getMediaMapper()->update($media);
                     return $this->redirect()->toRoute('admin/playgroundgallery');
@@ -213,8 +214,9 @@ class GalleryAdminController extends AbstractActionController
                 if($media) {
                     $media->removeTag();
                     foreach ($this->getRequest()->getPost('tags') as $tagId) {
-                        $tag = $this->getTagService()->getTagMapper()->findById($tagId);
-                        $media->addTag($tag);
+                        if ($tag = $this->getTagService()->getTagMapper()->findById($tagId)) {
+                            $media->addTag($tag);
+                        }
                     }
                     $this->getMediaService()->getMediaMapper()->update($media);
                 }
