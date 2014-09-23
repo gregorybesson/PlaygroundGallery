@@ -426,6 +426,11 @@
                     </div>
 
                     <?php $formCategory->bind($category) ?>
+                    <?php $ids = array(); ?>
+                    <?php foreach ($category->getLocales() as $locale) :?>
+                        <?php $ids[] = $locale->getId(); ?>
+                    <?php endforeach;?>
+                    <?php $formCategory->get('locales')->setValue($ids); ?>
                     <?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/edit', array('categoryId' => $category->getId()))) ?>
                     <?php $formCategory->prepare();?>
                     <?php echo $this->form()->openTag($formCategory); ?>
@@ -440,6 +445,11 @@
                             <?php echo $this->formLabel($formCategory->get('parent')); ?>
                             <?php echo $this->formSelect($formCategory->get('parent')); ?>
                             <?php echo $this->formElementErrors($formCategory->get('parent')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('locales')); ?>
+                            <?php echo $this->formSelect($formCategory->get('locales')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('locales')) ?>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -459,14 +469,16 @@
         <?php
         if($user->getRole()->getRoleId() != 'c_super_admin') {
         
-
             // Pour la création d'une categorie, on ne peut associer que les pays dont nous avons les droits
-            $websites = array();
-            foreach ($user->getWebsites() as $website) {
-                $websites[$website->getId()] = $website->getName();
+            $locales = array();
+            foreach ($user->getWebsites() as $website) {/* @var $website \PlaygroundCore\Entity\Website */
+                foreach ($website->getLocales() as $locale) {
+                    if (!array_key_exists($locale->getId(), $locales)) {
+                        $locales[$locale->getId()] = $locale->getName();
+                    }
+                }
             }
-            $formCategory->get('websites')->setValueOptions($websites);
-            
+            $formCategory->get('locales')->setValueOptions($locales);
         }
         ?>
         <?php $formCategory->bind(new PlaygroundGallery\entity\Category()) ?>
@@ -493,9 +505,9 @@
                             <?php echo $this->formElementErrors($formCategory->get('parent')) ?>
                         </div>
                         <div class="form-group">
-                            <?php echo $this->formLabel($formCategory->get('websites')); ?>
-                            <?php echo $this->formSelect($formCategory->get('websites')); ?>
-                            <?php echo $this->formElementErrors($formCategory->get('websites')) ?>
+                            <?php echo $this->formLabel($formCategory->get('locales')); ?>
+                            <?php echo $this->formSelect($formCategory->get('locales')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('locales')) ?>
                         </div>
                     </div>
                     <div class="modal-footer">

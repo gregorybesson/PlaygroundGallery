@@ -57,7 +57,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
         $service->setCategoryMapper($mapper);
 
-        $this->categoryData['websites'] = array();
+        $this->categoryData['locales'] = array();
 
         $category = $service->create($this->categoryData);
 

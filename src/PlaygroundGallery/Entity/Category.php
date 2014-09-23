@@ -51,13 +51,13 @@ class Category implements InputFilterAwareInterface
 
      /**
      * @var \Doctrine\Common\Collections\Collection
-     * @ORM\ManyToMany(targetEntity="PlaygroundCore\Entity\Website")
-     * @ORM\JoinTable(name="gallery_category_website",
+     * @ORM\ManyToMany(targetEntity="PlaygroundCore\Entity\Locale")
+     * @ORM\JoinTable(name="gallery_category_locale",
      *      joinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="locale_id", referencedColumnName="id")}
      * )
      */
-    protected $websites;
+    protected $locales;
 
     /**
      * @ORM\Column(type="datetime")
@@ -72,33 +72,33 @@ class Category implements InputFilterAwareInterface
 
     public function __construct()
     {
-        $this->websites = new ArrayCollection();
+        $this->locales = new ArrayCollection();
     }
 
      /**
-     * Get websites.
+     * Get locales.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getWebsites()
+    public function getLocales()
     {
-        return $this->websites;
+        return $this->locales;
     }
 
     /**
-     * Add a website to the user.
+     * Add a locale to the user.
      *
-     * @param Website $website
+     * @param Locale $locale
      *
      * @return void
      */
-    public function addWebsite($website)
+    public function addLocale($locale)
     {
-        $this->websites[] = $website;
+        $this->locales[] = $locale;
     }
 
-    public function removeWebsite(){
-        $this->websites = new ArrayCollection();
+    public function removeLocale(){
+        $this->locales = new ArrayCollection();
 
         return $this;
     }
@@ -165,7 +165,7 @@ class Category implements InputFilterAwareInterface
     
     /**
      * @param PlaygroundGallery\Entity\Category $categories
-     * @return Website
+     * @return Locale
      */
     public function setChildren($categories)
     {
@@ -176,7 +176,7 @@ class Category implements InputFilterAwareInterface
     
     /**
      * @param PlaygroundGallery\Entity\Category $category
-     * @return Website
+     * @return Locale
      */
     public function addChildren($category)
     {

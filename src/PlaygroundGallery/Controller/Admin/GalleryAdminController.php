@@ -150,6 +150,7 @@ class GalleryAdminController extends AbstractActionController
             } else {
                 $form->getInputFilter()->get('uploadImage')->setRequired(false);
             }
+            $form->getInputFilter()->get('tags')->setRequired(false);
             
             $form->bind($this->getRequest()->getPost());
             
@@ -166,11 +167,11 @@ class GalleryAdminController extends AbstractActionController
                     return $this->redirect()->toRoute('admin/playgroundgallery');
                 }
                 else {
-                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error 1');
+                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error creating the media');
                 }
             }
             else {
-                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error 2');
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Invalid form');
             }
         }
 
@@ -205,6 +206,7 @@ class GalleryAdminController extends AbstractActionController
             } else {
                 $form->getInputFilter()->get('uploadImage')->setRequired(false);
             }
+            $form->getInputFilter()->get('tags')->setRequired(false);
             
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
@@ -225,11 +227,11 @@ class GalleryAdminController extends AbstractActionController
                     return $this->redirect()->toRoute('admin/playgroundgallery');
                 }
                 else {
-                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+                    $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error saving the media');
                 }
             }
             else {
-                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Error');
+                $this->flashMessenger()->setNamespace('playgroundgallery')->addMessage('Invalid form');
             }
         }
 
