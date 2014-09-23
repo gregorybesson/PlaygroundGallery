@@ -5,7 +5,7 @@ namespace PlaygroundGallery\Form;
 use Zend\Form\Form;
 use Zend\Form\Element;
 use ZfcBase\Form\ProvidesEventsForm;
-use Zend\I18n\Translator\Translator;
+use Zend\Mvc\I18n\Translator;
 use Zend\ServiceManager\ServiceManager;
 
 class Category extends ProvidesEventsForm
@@ -53,15 +53,15 @@ class Category extends ProvidesEventsForm
 
         $this->add(array(
             'type' => 'Zend\Form\Element\Select',
-            'name' => 'websites',
+            'name' => 'locales',
             'options' => array(
-                'label' => $translator->translate('websites', 'playgroundgallery'),
-                'value_options' => $this->getWebsites(),
+                'label' => $translator->translate('locales', 'playgroundgallery'),
+                'value_options' => $this->getLocales(),
             ),
             'attributes' => array(
                 'class' => 'form-control multiselect',
                 'multiple' => 'multiple',
-                'value' => array_keys($this->getWebsites()),
+                'value' => array_keys($this->getLocales()),
             ),
         ));
         
@@ -79,24 +79,24 @@ class Category extends ProvidesEventsForm
     }
 
     /**
-    * Récupère la liste des websites
+    * Récupère la liste des locales
     *
-    * @return array $websitesForm liste des websites
+    * @return array $localesForm liste des locales
     */
-    private function getWebsites()
+    private function getLocales()
     {
-        $websites = $this->getServiceManager()->get('playgroundcore_website_service')->getWebsiteMapper()->findAll();
-        $websitesForm = array();
-        foreach ($websites as $website) {
-           $websitesForm[$website->getId()] = $website->getName();
+        $locales = $this->getServiceManager()->get('playgroundcore_locale_service')->getLocaleMapper()->findAll();
+        $localesForm = array();
+        foreach ($locales as $locale) {
+           $localesForm[$locale->getId()] = $locale->getName();
         }
-        return $websitesForm;
+        return $localesForm;
     }
 
     /**
     * Récupère la liste des categories
     *
-    * @return array $websitesForm liste des categories
+    * @return array $localesForm liste des categories
     */
     private function getCategories() {
         $categories = $this->getServiceManager()->get('playgroundgallery_category_service')->getCategoryMapper()->findBy(array('parent' => null));

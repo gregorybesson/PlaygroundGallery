@@ -1,396 +1,524 @@
 <?php $this->plugin('translate')->setTranslatorTextDomain('playgroundgallery'); ?>
 
 <?php foreach ($this->flashMessenger()->setNamespace('playgroundgallery')->getMessages() as $message): ?>
-	<?php echo  $this->translate($message); ?>
+    <?php echo  $this->translate($message); ?>
 <?php endforeach ?>
 
 <?php
 
-	// Iniatilize Form 
-	$formCategory = $this->formCategory;
-	
+    // Iniatilize Form 
+    $formCategory = $this->formCategory;
+    
     // Gestion des droits
     $categoriesByUser = $categories;
 ?>
-
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title"><?php echo $this->translate('Sort and order your medias'); ?></h3>
+    </div>
+    <div class="panel-body">
+        <form class="form" role="form" action="" method="post">
+        <div class="col-xs-6 col-sm-6">
+          <div class="form-group">
+            <input type="hidden" name="filters[category]" value="<?php echo $this->categoryId; ?>" />
+            <label><?php echo $this->translate('Type') ?> : </label> <br />
+            <select name="filters[type]" class="form-control" >
+                    <option value="all"  <?php echo isset($filters['type']) && $filters['type'] == "all" ?  "selected" : ''; ?> />  <?php echo $this->translate('All') ?> </option>
+                    <option value="pictures" <?php echo !empty($filters['type']) && $filters['type'] == "pictures" ?  "selected" : ''; ?>  /> <?php echo $this->translate('Pictures') ?> </option>
+                    <option value="videos" <?php echo !empty($filters['type']) && $filters['type'] == "videos" ?  "selected" : ''; ?>  /> <?php echo $this->translate('Videos') ?> </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-6">
+         <div class="form-group">
+            <label><?php echo $this->translate('Name').' '.$this->translate('Order')?> : </label> <br />
+            <select name="filters[order]" class="form-control" >
+                    <option value="ASC"  <?php echo !empty($filters['order']) && $filters['order'] == 'ASC' ?  "selected" : ''; ?> /> ASC </option>
+                    <option value="DESC" <?php echo !empty($filters['order']) && $filters['order'] == 'DESC' ?  "selected" : ''; ?>  /> DESC </option>
+            </select>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+            <button type="submit" class="btn btn-success pull-right "><?php echo $this->translate('validate'); ?></button>
+        </form>
+    </div>
+</div>
 <a data-toggle="modal" href="#modal_create" type="button" class="btn btn-primary pull-right"><?php echo $this->translate('Add a Media'); ?></a>
+<div class="clearfix"></div>
 <h1 class="f-left"><?php echo $this->translate('Gallery'); ?></h1>
 <div class="row">
-	<div class="col-md-3">
-		<div id="menu-categories">
-			<span href="#filter" data-option-value="*" type="button" class="folder-btn" data-option-key="filter" style="margin-left: '. ( $wave*5 ) .'px;" id="show-all"><span class="glyphicon glyphicon-home"></span> Toutes les catégories <span class="border">&nbsp;</span></span>
-			<?php $this->printCategoryTreeByUser($categories, $user); ?>
-		</div>
-		<br /><br />
-		<a data-toggle="modal" href="#modal_create_category" type="button" class="btn btn-primary btn-sm"><?php echo $this->translate('Add a Category'); ?></a>
-	</div>
-	<div class="col-md-9">
-		<div id="media-sorters">
-			<div class="btn-group">
-				<button href="#filter" data-option-value="" type="button" class="selected btn btn-default active" data-option-key="filter" ><?php echo $this->translate('Show All'); ?></button>
-				<button href="#filter" data-option-value=":not(.video)" type="button" class="btn btn-default" data-option-key="filter"><?php echo $this->translate('Pictures'); ?></button>
-				<button href="#filter" data-option-value=":not(.image)" type="button" class="btn btn-default" data-option-key="filter"><?php echo $this->translate('Videos'); ?></button>
-			</div>
-			<div class="btn-group">
-				<button href="#sortBy=original-order" data-option-value="original-order" type="button" class="selected btn btn-default active" data-option-key="sortBy"><?php echo $this->translate('Original Order'); ?></button>
-				<button href="#sortBy=name" data-option-value="name" type="button" class="btn btn-default" data-option-key="sortBy"><?php echo $this->translate('Name'); ?></button>
-			</div>
-			<div class="btn-group">
-				<button href="#sortAscending=true" data-option-value="true" type="button" class="btn btn-default active" data-option-key="sortAscending"><?php echo $this->translate('ASC'); ?></button>
-				<button href="#sortAscending=false" data-option-value="false" type="button" class="btn btn-default" data-option-key="sortAscending"><?php echo $this->translate('DESC'); ?></button>
-			</div>
-		</div>
-		<div class="clearfix">&nbsp;</div>
-		<?php if(count($medias) > 0 ): ?>
-			<div id="gallery-progress" class="progress progress-striped active">
-		  		<div class="progress-bar"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-			</div>
-		<?php endif; ?>
-		<div id="no-media-found" class="text-center">
-			<div class="alert alert-warning">
-				<h1><?php echo $this->translate('No media found') ?></h1>
-			</div>
-		</div>
-		<div class="row" id="row">
-	        <?php foreach ($medias as $media): ?>
-	        <?php
-	        	$headers = get_headers(trim($media->getUrl()));
-	        	$mime='';
-	        	if($headers) {
-				    foreach ($headers as $value) {
-				    	if(preg_match('%^Content-Type:%', $value)) {
-				    		if(strpos($value,'image')!==false){
-				    			$mime = 'image';
-				    		}
-				    	}
-				    }
-				}
-				else {
-					continue;
-				}
-	        ?>
-	            <div class="col-md-4 element <?php if($mime=='image') : ?>image<?php else : ?>video<?php endif ?> cat-<?php echo strtolower($media->getCategory()->getId()) ?>" data-id="media-<?php echo $media->getId() ?>" id="<?php echo $media->getId() ?>">
-		            <a  data-toggle="modal" href="#modal_remove_<?php echo $media->getId(); ?>" type="button" class="close pull-right" aria-hidden="true">&times;</a>
-		            <div class="well">
-		            	<a data-toggle="modal" href="#modal_show" class="show-carrousel" data-id="media-<?php echo $media->getId() ?>">
-			                <?php if($mime=='image') : ?>
-			                	<img src="<?php echo trim($media->getUrl()) ?>" alt="<?php echo trim($media->getUrl()) ?>" class="img-rounded img-responsive">
-			                <?php else : $tab = explode('/', trim($media->getUrl())); $codeVideo = end($tab); $miniatures = json_decode(file_get_contents("http://gdata.youtube.com/feeds/api/videos/".$codeVideo."?v=2&alt=jsonc")) ?>
-			                	<img src="<?php echo $miniatures->data->thumbnail->hqDefault ?>" alt="<?php echo $miniatures->data->thumbnail->hqDefault?>" class="img-rounded img-responsive">
-			                <?php endif ?>
-			            </a>
-		                <div class="description">
-		                	<h4 class="name"><?php echo $media->getName() ?></h4>
-		                	<h5><?php echo $this->translate('Created at') ?> : <?php echo $media->getCreatedAt()->format('d/m/Y') ?></h5>
-		                    <h5><?php echo $this->translate('Credit');?> : <?php echo $media->getCredit() ?></h5>
-		                	<?php if($mime=='image') : ?>
-		                		<a href="<?php echo $this->url('admin/playgroundgallery/download', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-info btn-xs"><?php echo $this->translate('Download'); ?></a>
-		                	<?php endif ?>
-		                	<a data-toggle="modal" href="#modal_edit_<?php echo $media->getId() ?>" type="button" class="btn btn-primary btn-xs"><?php echo $this->translate('Edit'); ?></a>
-		                </div>
-		            </div>
-	            </div>
-				<div class="modal fade" id="modal_remove_<?php echo $media->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Do you really want to remove'); ?> " <?php echo $media->getName() ?> " ?</h4>
-							</div>
-							<div class="modal-body">
-								<a href="<?php echo $this->url('admin/playgroundgallery/remove', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-danger"><?php echo $this->translate('Remove'); ?></a>
-								<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
-							</div>
-						</div><!-- /.modal-content -->
-					</div><!-- /.modal-dialog -->
-				</div>
-				<div class="modal fade" id="modal_edit_<?php echo $media->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a media'); ?></h4>
-							</div>
-							<?php $formMedia = $this->formMedia;?>
-							<?php $formMedia->prepare();?>
-							<?php $formMedia->setAttribute('action', $this->url('admin/playgroundgallery/edit', array('mediaId' => $media->getId()))) ?>
-							<?php $formMedia->bind($media);?>
-							<?php echo $this->form()->openTag($formMedia); ?>
-							<div class="modal-body">
+    <div class="col-md-3">
+        <div id="menu-categories">
+            <a href="/admin/gallery" type="button" class="folder-btn" data-option-key="" style="margin-left: '. ( $wave*5 ) .'px;"><span class="glyphicon glyphicon-home"></span> <?php echo $this->translate('All Categories'); ?> <span class="border">&nbsp;</span></a>
+            <?php $this->printCategoryTreeByUser($categories, $user, $filters); ?>
+        </div>
+        <br /><br />
+        <a data-toggle="modal" href="#modal_create_category" type="button" class="btn btn-primary btn-sm"><?php echo $this->translate('Add a Category'); ?></a>
+        <br /><br />
+        <div id="menu-tags">
+            <?php $this->printTagTree(); ?>
+        </div>
+        <br /><br />
+        <a data-toggle="modal" href="#modal_create_tag" type="button" class="btn btn-primary btn-sm"><?php echo $this->translate('Add a Tag'); ?></a>
+    </div>
+    <div class="col-md-9">
+        <?php if(count($medias) == 0 ): ?>
+            <div id="no-media-found" class="text-center">
+                <div class="alert alert-warning">
+                    <h1><?php echo $this->translate('No media found.'); ?></h1>
+                </div>
+            </div>
+        <?php endif; ?>
+        <?php $cpt = 0 ?>
+        <div class="row" id="row">
+            <?php foreach ($medias as $media): ?>
+            <?php
+                if($cpt%3 == 0) : ?>
+                <div class="clearfix"></div>
+                <?php endif; 
+                $cpt ++;
+                $mime = '';
+                if(strpos($media->getUrl(), 'youtube.com') === false){
+                    $mime = 'image';
+                }
+            ?>
+                <div class="col-md-4 element <?php if($mime=='image') : ?>image<?php else : ?>video<?php endif ?> cat-<?php echo strtolower($media->getCategory()->getId()) ?>" data-id="media-<?php echo $media->getId() ?>" id="<?php echo $media->getId() ?>">
+                    <a  data-toggle="modal" href="#modal_remove_<?php echo $media->getId(); ?>" type="button" class="close pull-right" aria-hidden="true">&times;</a>
+                    <div class="well">
+                        <a data-toggle="modal" href="#modal_show" class="show-carrousel" data-id="media-<?php echo $media->getId() ?>">
+                            <?php if($mime=='image') : ?>
+                                <img src="<?php echo trim($media->getUrl()) ?>" alt="<?php echo trim($media->getUrl()) ?>" class="img-rounded img-responsive">
+                            <?php else : ?>
+                                <img src="<?php echo $media->getPoster() ?>" alt="<?php echo $media->getName()?>" class="img-rounded img-responsive">
+                            <?php endif; ?>
+                        </a>
+                        <div class="description">
+                            <h4 class="name"><?php echo $media->getName() ?></h4>
+                            <h5><?php echo $this->translate('Created at') ?> : <?php echo $media->getCreatedAt()->format($this->translate('date_format')) ?></h5>
+                            <h5><?php echo $this->translate('Credit');?> : <?php echo $media->getCredit() ?></h5>
+                            <?php if($mime=='image') : ?>
+                                <a href="<?php echo $this->url('admin/playgroundgallery/download', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-info btn-xs"><?php echo $this->translate('Download'); ?></a>
+                            <?php endif ?>
+                            <a data-toggle="modal" href="#modal_edit_<?php echo $media->getId() ?>" type="button" class="btn btn-primary btn-xs"><?php echo $this->translate('Edit'); ?></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="modal_remove_<?php echo $media->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Do you really want to remove ?'); ?> " <?php echo $media->getName() ?> " ?</h4>
+                            </div>
+                            <div class="modal-body">
+                                <a href="<?php echo $this->url('admin/playgroundgallery/remove', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-danger"><?php echo $this->translate('Remove'); ?></a>
+                                <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+                <div class="modal fade" id="modal_edit_<?php echo $media->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a media'); ?></h4>
+                            </div>
+                            <?php $formMedia = $this->formMedia;?>
+                            <?php $formMedia->prepare();?>
+                            <?php $formMedia->setAttribute('action', $this->url('admin/playgroundgallery/edit', array('mediaId' => $media->getId()))) ?>
+                            <?php $formMedia->bind($media);?>
+                            <?php $formMedia->get('category')->setValue($media->getCategory()->getId()); ?>
+                            
+                            <?php $ids = array(); ?>
+                            <?php foreach ($media->getTags() as $tag) :?>
+                                <?php $ids[] = $tag->getId(); ?>
+                            <?php endforeach;?>
+                            <?php $formMedia->get('tags')->setValue($ids); ?>
+                            
+                            <?php $isArbo = false; ?>
+                            <?php if(!empty($mediaArbo[$media->getId()])): ?>
+                            <?php $isArbo = true; ?>
+                            <?php endif; ?>
 
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('name')); ?>
-									<?php echo $this->formInput($formMedia->get('name')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('name')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('url')); ?>
-									<?php echo $this->formInput($formMedia->get('url')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('url')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('credit')); ?>
-									<?php echo $this->formInput($formMedia->get('credit')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('credit')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('description')); ?>
-									<?php echo $this->formTextArea($formMedia->get('description')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('description')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('category')); ?>
-									<?php echo $this->formSelect($formMedia->get('category')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('category')) ?>
-								</div>
-								<div class='pull-right margin-right30'>
-									
-								</div>
+                            <?php $isColor = false; ?>
+                            <?php if(!empty($mediaColor[$media->getId()])): ?>
+                            <?php $isColor = true; ?>
+                            <?php endif; ?>
 
-							</div>
-							<div class="modal-footer">
-								<?php $formMedia->get('submit')->setLabel($this->translate('Update')); ?>
-								<?php echo $this->formButton($formMedia->get('submit')) ?>
-								<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
-							</div>
-							<?php echo $this->form()->closeTag() ?>
-						</div><!-- /.modal-content -->
-					</div><!-- /.modal-dialog -->
-				</div>
-	        <?php endforeach; ?>
-		</div>
+                            <?php echo $this->form()->openTag($formMedia); ?>
+                            <div class="modal-body">
 
-		<div class="modal fade" id="modal_create" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new media'); ?></h4>
-					</div>
-					<div class="row">
-						<div class="modal-body">
-							<div class="col-md-6">
-								<?php $formMedia = $this->formMedia;?>
-								<?php $formMedia->prepare();?>
-								<?php $formMedia->setAttribute('action', $this->url('admin/playgroundgallery/create')) ?>
-								<?php $formMedia->bind(new \PlaygroundGallery\Entity\Media());?>
-								<?php echo $this->form()->openTag($formMedia); ?>
-								
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('name')); ?>
+                                    <?php echo $this->formInput($formMedia->get('name')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('name')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('upload_or_paste')) ?>
+                                </div>
+                                <div class="form-group upload">
+                                    <?php echo $this->formLabel($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formFile($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('uploadImage')) ?>
+                                </div>
+                                <div class="form-group paste_url">
+                                    <?php echo $this->formLabel($formMedia->get('url')); ?>
+                                    <?php echo $this->formInput($formMedia->get('url')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('url')) ?>
+                                </div>
+                                <div class="form-group paste_url">
+                                    <?php echo $this->formLabel($formMedia->get('poster')); ?>
+                                    <?php echo $this->formInput($formMedia->get('poster')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('poster')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('credit')); ?>
+                                    <?php echo $this->formInput($formMedia->get('credit')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('credit')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('description')); ?>
+                                    <?php echo $this->formTextArea($formMedia->get('description')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('description')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('category')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('category')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('category')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('tags')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('tags')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('tags')) ?>
+                                </div>
+                                <div class='pull-right margin-right30'>
+                                    
+                                </div>
 
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('name')); ?>
-									<?php echo $this->formInput($formMedia->get('name')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('name')) ?>
-								</div>
-								<div class="form-group">
-									<?php $formMedia->get('url')->setAttributes(array('id' => 'urlform')) ?>
-									<?php echo $this->formLabel($formMedia->get('url')); ?>
-									<?php echo $this->formInput($formMedia->get('url')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('url')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('credit')); ?>
-									<?php echo $this->formInput($formMedia->get('credit')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('credit')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('description')); ?>
-									<?php echo $this->formTextArea($formMedia->get('description')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('description')) ?>
-								</div>
-								<div class="form-group">
-									<?php echo $this->formLabel($formMedia->get('category')); ?>
-									<?php echo $this->formSelect($formMedia->get('category')); ?>
-									<?php echo $this->formElementErrors($formMedia->get('category')) ?>
-								</div>
-								<div class='pull-right margin-right30'>
-									
-								</div>
-							</div>
-						
-							<div id="preview-add-media" class="col-md-6">
-								<label>Preview</label>
-								<img id="preview-img" src="" width="100%" alt=""/>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<?php $formMedia->get('submit')->setLabel($this->translate('Create')); ?>
-						<?php echo $this->formButton($formMedia->get('submit')) ?>
-						<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
-					</div>
-					<?php echo $this->form()->closeTag() ?>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
+                            </div>
+                            <div class="modal-footer">
+                                <?php $formMedia->get('submit')->setLabel($this->translate('Update')); ?>
+                                <?php echo $this->formButton($formMedia->get('submit')) ?>
+                                <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                            </div>
+                            <?php echo $this->form()->closeTag() ?>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+            <?php endforeach; ?>
+        </div>
 
-		<div class="modal fade" id="modal_show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="show-carousel">
+        <div class="modal fade" id="modal_create" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new media'); ?></h4>
+                    </div>
+                    <div class="row">
+                        <div class="modal-body">
+                            <div class="col-md-6">
+                                <?php $formMedia = $this->formMedia;?>
+                                <?php $formMedia->prepare();?>
+                                <?php $formMedia->setAttribute('action', $this->url('admin/playgroundgallery/create')) ?>
+                                <?php $formMedia->bind(new \PlaygroundGallery\Entity\Media());?>
+                                <?php echo $this->form()->openTag($formMedia); ?>
+                                
 
-						<div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
-							
-						  <!-- Wrapper for slides -->
-						  <div class="carousel-inner">
-						    
-						  </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('name')); ?>
+                                    <?php echo $this->formInput($formMedia->get('name')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('name')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('upload_or_paste')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('upload_or_paste')) ?>
+                                </div>
+                                <div class="form-group upload">
+                                    <?php echo $this->formLabel($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formFile($formMedia->get('uploadImage')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('uploadImage')) ?>
+                                </div>
+                                <div class="form-group paste_url">
+                                    <?php echo $this->formLabel($formMedia->get('url')); ?>
+                                    <?php echo $this->formInput($formMedia->get('url')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('url')) ?>
+                                </div>
+                                <div class="form-group paste_url">
+                                    <?php echo $this->formLabel($formMedia->get('poster')); ?>
+                                    <?php echo $this->formInput($formMedia->get('poster')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('poster')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('credit')); ?>
+                                    <?php echo $this->formInput($formMedia->get('credit')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('credit')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('description')); ?>
+                                    <?php echo $this->formTextArea($formMedia->get('description')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('description')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('category')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('category')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('category')) ?>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $this->formLabel($formMedia->get('tags')); ?>
+                                    <?php echo $this->formSelect($formMedia->get('tags')); ?>
+                                    <?php echo $this->formElementErrors($formMedia->get('tags')) ?>
+                                </div>
+                                
+                                <div class='pull-right margin-right30'>
+                                    
+                                </div>
+                            </div>
+                        
+                            <div id="preview-add-media" class="col-md-6">
+                                <label><?php echo $this->translate('Preview'); ?></label>
+                                <img id="preview-img" src="" width="100%" alt=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php $formMedia->get('submit')->setLabel($this->translate('Create')); ?>
+                        <?php echo $this->formButton($formMedia->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        
+        <div class="modal fade" id="modal_create_tag" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new tag'); ?></h4>
+                    </div>
+                    <?php $formTag = $this->formTag ?>
+                    <?php $formTag->bind(new PlaygroundGallery\Entity\Tag()) ?>
+                    <?php $formTag->setAttribute('action', $this->url('admin/playgroundgallery/tag/create')) ?>
+                    <?php $formTag->prepare();?>
+                    <?php echo $this->form()->openTag($formTag); ?>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('name')); ?>
+                            <?php echo $this->formInput($formTag->get('name')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('parent')); ?>
+                            <?php echo $this->formSelect($formTag->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('parent')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php $formTag->get('submit')->setLabel($this->translate('Create')); ?>
+                        <?php echo $this->formButton($formTag->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
 
-						  <!-- Controls -->
-						  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-						    <span class="glyphicon glyphicon-chevron-left"></span>
-						  </a>
-						  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-						    <span class="glyphicon glyphicon-chevron-right"></span>
-						  </a>
-						</div>
-						<div data-dismiss="modal" class="closeModal">
-						</div>
-					</div>
-				</div><!-- /.modal-dialog -->
-		</div>
+        <div class="modal fade" id="modal_show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="show-carousel">
 
-		<div id="media-storage">
-			<?php foreach ($medias as $media): ?>
-		        <?php
-		        	$headers = get_headers(trim($media->getUrl()));
-		        	$mime='';
-		        	if($headers) {
-					    foreach ($headers as $value) {
-					    	if(preg_match('%^Content-Type:%', $value)) {
-					    		if(strpos($value,'image')!==false){
-					    			$mime = 'image';
-					    		}
-					    	}
-					    }
-					}
-					else {
-						continue;
-					}
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
+                            
+                          <!-- Wrapper for slides -->
+                          <div class="carousel-inner">
+                            
+                          </div>
 
-					// calcul pour l'alignement vertical
-					$margin = 0;
-					if($mime=='image') {
-						$size = getimagesize($media->getUrl());
-						$height = $size[1];
-						if($height<500) {
-							$margin = (500-$height)/2;
-						}
-					}
-		        ?>
-		    <div class="item media-<?php echo $media->getId() ?>" style="padding-top: <?php echo $margin ?>px;">
-		      <?php if($mime=='image') : ?>
-					<img src="<?php echo $media->getUrl() ?>" class="img-responsive"/>
-				<?php else : ?>
-					<div class="embed-media-video">
-						<embed class="media-video" width="640" height="360" src="<?php echo $media->getUrl() ?>" frameborder="0"></embed>
-					</div>
-				<?php endif; ?>
-				<div class="carousel-caption">
-			       <div class="carousel-caption-content">
-						<p class="lead"><?php echo $media->getName() ?> (<?php echo $media->getCredit() ?>)<?php if($mime=='image') : ?> <a href="<?php echo $this->url('admin/playgroundgallery/download', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-info btn-xs"><?php echo $this->translate('Download'); ?></a><?php endif ?></p>
-						<?php if($mime!='image') : ?>
-						<?php echo $this->translate('Link of the video'); ?> : <a href="<?php echo $media->getUrl() ?>"><?php echo $media->getUrl() ?></a>
-						<br />
-						<?php endif ?>
-						<?php echo $media->getDescription() ?>
-						</div>
-			    </div>
-		    </div>
-		    <?php endforeach; ?>
-		</div>
+                          <!-- Controls -->
+                          <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                          </a>
+                          <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                          </a>
+                        </div>
+                        <div data-dismiss="modal" class="closeModal">
+                        </div>
+                    </div>
+                </div><!-- /.modal-dialog -->
+        </div>
 
-		<?php foreach ($categoriesByUser as $category): ?>
-		<div class="modal fade" id="modal_edit_category_<?php echo $category->getId() ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a category'); ?></h4>
-					</div>
+        <div id="media-storage">
+            <?php foreach ($medias as $media): ?>
+                <?php
+                    $mime = '';
+                    if(strpos($media->getUrl(), 'youtube.com') === false){
+                        $mime = 'image';
+                    }
+                ?>
+            <div class="item media-<?php echo $media->getId() ?>" style="padding-top: 0px;">
+              <?php if($mime=='image') : ?>
+                    <img src="<?php echo $media->getUrl() ?>" class="img-responsive"/>
+                <?php else : ?>
+                    <div class="embed-media-video">
+                        <embed class="media-video" width="640" height="360" src="<?php echo $media->getUrl() ?>" frameborder="0"></embed>
+                    </div>
+                <?php endif; ?>
+                <div class="carousel-caption">
+                   <div class="carousel-caption-content">
+                        <p class="lead"><?php echo $media->getName() ?> (<?php echo $media->getCredit() ?>)<?php if($mime=='image') : ?> <a href="<?php echo $this->url('admin/playgroundgallery/download', array('mediaId' => $media->getId())) ?>" type="button" class="btn btn-info btn-xs"><?php echo $this->translate('Download'); ?></a><?php endif ?></p>
+                        <?php if($mime!='image') : ?>
+                        <?php echo $this->translate('Link of the video'); ?> : <a href="<?php echo $media->getUrl() ?>"><?php echo $media->getUrl() ?></a>
+                        <br />
+                        <?php endif ?>
+                        <?php echo $media->getDescription() ?>
+                        </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <?php foreach ($this->getTags() as $tag): ?>
+        <div class="modal fade" id="modal_edit_tag_<?php echo $tag->getId() ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a tag'); ?></h4>
+                    </div>
 
-					<?php $formCategory->bind($category) ?>
-					<?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/edit', array('categoryId' => $category->getId()))) ?>
-					<?php $formCategory->prepare();?>
-					<?php echo $this->form()->openTag($formCategory); ?>
-					<div class="modal-body">
+                    <?php $formTag->bind($tag) ?>
+                    <?php $formTag->setAttribute('action', $this->url('admin/playgroundgallery/tag/edit', array('tagId' => $tag->getId()))) ?>
+                    <?php $formTag->prepare();?>
+                    <?php echo $this->form()->openTag($formTag); ?>
+                    <div class="modal-body">
 
-						<div class="form-group">
-							<?php echo $this->formLabel($formCategory->get('name')); ?>
-							<?php echo $this->formInput($formCategory->get('name')); ?>
-							<?php echo $this->formElementErrors($formCategory->get('name')) ?>
-						</div>
-						<div class="form-group">
-							<?php echo $this->formLabel($formCategory->get('parent')); ?>
-							<?php echo $this->formSelect($formCategory->get('parent')); ?>
-							<?php echo $this->formElementErrors($formCategory->get('parent')) ?>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<?php if(count($category->getChildren())==0 && count($category->getMedias())==0) : ?>
-							<a href="<?php echo $this->url('admin/playgroundgallery/category/remove', array('categoryId' => $category->getId())) ?>"><button type="button" class="btn btn-danger pull-left"><?php echo $this->translate('Delete') ?></button></a>
-						<?php endif ?>
-						<?php $formCategory->get('submit')->setLabel($this->translate('Edit')); ?>
-						<?php echo $this->formButton($formCategory->get('submit')) ?>
-						<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
-					</div>
-					<?php echo $this->form()->closeTag() ?>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<?php endforeach ?>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('name')); ?>
+                            <?php echo $this->formInput($formTag->get('name')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formTag->get('parent')); ?>
+                            <?php echo $this->formSelect($formTag->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formTag->get('parent')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="<?php echo $this->url('admin/playgroundgallery/tag/remove', array('tagId' => $tag->getId())) ?>"><button type="button" class="btn btn-danger pull-left"><?php echo $this->translate('Remove') ?></button></a>
+                        <?php $formTag->get('submit')->setLabel($this->translate('Edit')); ?>
+                        <?php echo $this->formButton($formTag->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <?php endforeach ?>
 
-		<?php
-		if($user->getRole()->getRoleId() != 'c_super_admin') {
-		
+        <?php foreach ($categoriesByUser as $category): ?>
+        <div class="modal fade" id="modal_edit_category_<?php echo $category->getId() ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Edit a category'); ?></h4>
+                    </div>
 
-			// Pour la création d'une categorie, on ne peut associer que les pays dont nous avons les droits
-			$websites = array();
-			foreach ($user->getWebsites() as $website) {
-	            $websites[$website->getId()] = $website->getName();
-	        }
-	        $formCategory->get('websites')->setValueOptions($websites);
+                    <?php $formCategory->bind($category) ?>
+                    <?php $ids = array(); ?>
+                    <?php foreach ($category->getLocales() as $locale) :?>
+                        <?php $ids[] = $locale->getId(); ?>
+                    <?php endforeach;?>
+                    <?php $formCategory->get('locales')->setValue($ids); ?>
+                    <?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/edit', array('categoryId' => $category->getId()))) ?>
+                    <?php $formCategory->prepare();?>
+                    <?php echo $this->form()->openTag($formCategory); ?>
+                    <div class="modal-body">
 
-	    }
-    	?>
-    	<?php $formCategory->bind(new PlaygroundGallery\entity\Category()) ?>
-    	<?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/create')) ?>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('name')); ?>
+                            <?php echo $this->formInput($formCategory->get('name')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('parent')); ?>
+                            <?php echo $this->formSelect($formCategory->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('parent')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('locales')); ?>
+                            <?php echo $this->formSelect($formCategory->get('locales')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('locales')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php if(count($category->getChildren())==0 && count($category->getMedias())==0) : ?>
+                            <a href="<?php echo $this->url('admin/playgroundgallery/category/remove', array('categoryId' => $category->getId())) ?>"><button type="button" class="btn btn-danger pull-left"><?php echo $this->translate('Remove') ?></button></a>
+                        <?php endif ?>
+                        <?php $formCategory->get('submit')->setLabel($this->translate('Edit')); ?>
+                        <?php echo $this->formButton($formCategory->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <?php endforeach ?>
 
-		<div class="modal fade" id="modal_create_category" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new category'); ?></h4>
-					</div>
-					
-					<?php $formCategory->prepare();?>
-					<?php echo $this->form()->openTag($formCategory); ?>
-					<div class="modal-body">
+        <?php
+        if($user->getRole()->getRoleId() != 'c_super_admin') {
+        
+            // Pour la création d'une categorie, on ne peut associer que les pays dont nous avons les droits
+            $locales = array();
+            foreach ($user->getWebsites() as $website) {/* @var $website \PlaygroundCore\Entity\Website */
+                foreach ($website->getLocales() as $locale) {
+                    if (!array_key_exists($locale->getId(), $locales)) {
+                        $locales[$locale->getId()] = $locale->getName();
+                    }
+                }
+            }
+            $formCategory->get('locales')->setValueOptions($locales);
+        }
+        ?>
+        <?php $formCategory->bind(new PlaygroundGallery\entity\Category()) ?>
+        <?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/create')) ?>
+        <div class="modal fade" id="modal_create_category" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Create a new category'); ?></h4>
+                    </div>
+                    
+                    <?php $formCategory->prepare();?>
+                    <?php echo $this->form()->openTag($formCategory); ?>
+                    <div class="modal-body">
 
-						<div class="form-group">
-							<?php echo $this->formLabel($formCategory->get('name')); ?>
-							<?php echo $this->formInput($formCategory->get('name')); ?>
-							<?php echo $this->formElementErrors($formCategory->get('name')) ?>
-						</div>
-						<div class="form-group">
-							<?php echo $this->formLabel($formCategory->get('parent')); ?>
-							<?php echo $this->formSelect($formCategory->get('parent')); ?>
-							<?php echo $this->formElementErrors($formCategory->get('parent')) ?>
-						</div>
-						<div class="form-group">
-							<?php echo $this->formLabel($formCategory->get('websites')); ?>
-							<?php echo $this->formSelect($formCategory->get('websites')); ?>
-							<?php echo $this->formElementErrors($formCategory->get('websites')) ?>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<?php $formCategory->get('submit')->setLabel($this->translate('Create')); ?>
-						<?php echo $this->formButton($formCategory->get('submit')) ?>
-						<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
-					</div>
-					<?php echo $this->form()->closeTag() ?>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-
-
-
-
-	</div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('name')); ?>
+                            <?php echo $this->formInput($formCategory->get('name')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('name')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('parent')); ?>
+                            <?php echo $this->formSelect($formCategory->get('parent')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('parent')) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $this->formLabel($formCategory->get('locales')); ?>
+                            <?php echo $this->formSelect($formCategory->get('locales')); ?>
+                            <?php echo $this->formElementErrors($formCategory->get('locales')) ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php $formCategory->get('submit')->setLabel($this->translate('Create')); ?>
+                        <?php echo $this->formButton($formCategory->get('submit')) ?>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Cancel');?></button>
+                    </div>
+                    <?php echo $this->form()->closeTag() ?>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+     <?php echo $this->paginationControl($mediasPaginator, 'Sliding', 'playground-gallery/partial/pagination.phtml', array('url' => 'admin/playgroundgallery/galleryPager', 'filters' => urlencode(serialize($filters)), "nbResults" => $nbResults)); ?>
 </div>
 <hr />

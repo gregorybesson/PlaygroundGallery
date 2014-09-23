@@ -2,45 +2,45 @@
 namespace PlaygroundGalleryTest\Service;
 
 use PlaygroundGalleryTest\Bootstrap;
-use \PlaygroundGallery\Entity\Category as CategoryEntity;
+use \PlaygroundGallery\Entity\Tag as TagEntity;
 
-class CategoryTest extends \PHPUnit_Framework_TestCase
+class TagTest extends \PHPUnit_Framework_TestCase
 {
     protected $traceError = true;
 
     /**
-     * Category sample
+     * Tag sample
      * @var Array
      */
-    protected $categoryData;
+    protected $tagData;
 
     public function setUp()
     {
-        $this->categoryData = array(
-            'name' => 'CeciEstUnTitre',
+        $this->tagData = array(
+            'name' => 'Tag Name *ù£µ%',
         );
         parent::setUp();
     }
 
     public function testCreateTrue()
     {
-        $service = new \PlaygroundGallery\Service\Category();
+        $service = new \PlaygroundGallery\Service\Tag();
         $service->setServiceManager(Bootstrap::getServiceManager());
 
-        $categoryPostUpdate = new CategoryEntity;
-        $categoryPostUpdate->populate($this->categoryData);
+        $tagPostUpdate = new TagEntity();
+        $tagPostUpdate->populate($this->tagData);
 
-        $mapper = $this->getMockBuilder('PlaygroundGallery\Mapper\Category')
+        $mapper = $this->getMockBuilder('PlaygroundGallery\Mapper\Tag')
             ->disableOriginalConstructor()
             ->getMock();
         $mapper->expects($this->any())
             ->method('insert')
-            ->will($this->returnValue($categoryPostUpdate));
+            ->will($this->returnValue($tagPostUpdate));
         $mapper->expects($this->any())
             ->method('update')
-            ->will($this->returnValue($categoryPostUpdate));
+            ->will($this->returnValue($tagPostUpdate));
 
-        $form = $this->getMockBuilder('PlaygroundGallery\Form\Category')
+        $form = $this->getMockBuilder('PlaygroundGallery\Form\Tag')
             ->disableOriginalConstructor()
             ->getMock();
         $form->expects($this->any())
@@ -53,34 +53,32 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $service->setCategoryForm($form);
+        $service->setTagForm($form);
 
-        $service->setCategoryMapper($mapper);
+        $service->setTagMapper($mapper);
 
-        $this->categoryData['locales'] = array();
+        $tag = $service->create($this->tagData);
 
-        $category = $service->create($this->categoryData);
-
-        $this->assertEquals($this->categoryData['name'], $category->getName());
+        $this->assertEquals($this->tagData['name'], $tag->getName());
     }
 
     public function testEditTrue()
     {
-        $service = new \PlaygroundGallery\Service\Category();
+        $service = new \PlaygroundGallery\Service\Tag();
         $service->setServiceManager(Bootstrap::getServiceManager());
 
-        $category = new CategoryEntity;
-        $category->populate($this->categoryData);
+        $tag = new TagEntity;
+        $tag->populate($this->tagData);
 
-        $mapper = $this->getMockBuilder('PlaygroundGallery\Mapper\Category')
+        $mapper = $this->getMockBuilder('PlaygroundGallery\Mapper\Tag')
             ->disableOriginalConstructor()
             ->getMock();
         $mapper->expects($this->any())
             ->method('insert')
-            ->will($this->returnValue($category));
+            ->will($this->returnValue($tag));
         $mapper->expects($this->any())
             ->method('update')
-            ->will($this->returnValue($category));
+            ->will($this->returnValue($tag));
 
         $form = $this->getMockBuilder('PlaygroundGallery\Form\Media')
             ->disableOriginalConstructor()
@@ -95,13 +93,13 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $service->setCategoryForm($form);
+        $service->setTagForm($form);
 
-        $service->setCategoryMapper($mapper);
+        $service->setTagMapper($mapper);
 
-        $category = $service->edit(array('name' => 'New one'), $category);
+        $tag = $service->edit(array('name' => 'New one'), $tag);
 
-        $this->assertNotEquals($category->getName(), $this->categoryData['name']);
+        $this->assertNotEquals($tag->getName(), $this->tagData['name']);
     }
 
     

@@ -5,8 +5,10 @@ namespace PlaygroundGallery\Form;
 use Zend\Form\Form;
 use Zend\Form\Element;
 use ZfcBase\Form\ProvidesEventsForm;
-use Zend\I18n\Translator\Translator;
+use Zend\Mvc\I18n\Translator;
 use Zend\ServiceManager\ServiceManager;
+use PlaygroundGallery\Entity\Media as MediaEntity;
+use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 
 class Media extends ProvidesEventsForm
 {
@@ -19,6 +21,8 @@ class Media extends ProvidesEventsForm
 
         parent::__construct($name);
         $this->setServiceManager($sm);
+        
+        $this->setAttribute('enctype','multipart/form-data');
         
         $this->add(array(
             'name' => 'category',
@@ -52,6 +56,30 @@ class Media extends ProvidesEventsForm
             )
         ));
         
+        $this->add(array(
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'upload_or_paste',
+            'options' => array(
+                'label' => $translator->translate('Upload image or paste url', 'playgroundgallery'),
+                'value_options' => array(
+                    'paste_url'      => $translator->translate('Past url', 'playgroundgallery'),
+                    'upload'        => $translator->translate('Upload image', 'playgroundgallery'),
+                ),
+            ),
+            'attributes' => array(
+                'class' => 'form-control',
+            ),
+        ));
+        
+        $this->add(array(
+            'name' => 'uploadImage',
+            'attributes' => array(
+                'type'  => 'file',
+            ),
+            'options' => array(
+                'label' => $translator->translate('Image', 'playgroundgallery'),
+            ),
+        ));
         
         $this->add(array(
     		'name' => 'url',
@@ -130,6 +158,21 @@ class Media extends ProvidesEventsForm
             ),
         ));
         
+        $this->add(array(
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'tags',
+            'options' => array(
+                'label' => $translator->translate('tags', 'playgroundgallery'),
+                'value_options' => $this->getTags(),
+                'disable_inarray_validator' => true
+            ),
+            'attributes' => array(
+                'class' => 'form-control multiselect',
+                'multiple' => 'multiple',
+                'value' => array_keys($this->getTags()),
+            ),
+        ));
+        
         $submitElement = new Element\Button('submit');
         $submitElement->setLabel($translator->translate('Ok', 'playgroundgallery'))
             ->setAttributes(array(
@@ -141,6 +184,21 @@ class Media extends ProvidesEventsForm
             //'priority' => - 100
         ));
 
+    }
+    
+    /**
+     * Récupère la liste des tags
+     *
+     * @return array
+     */
+    private function getTags()
+    {
+        $tags = $this->getServiceManager()->get('playgroundgallery_tag_service')->getTagMapper()->findAll();
+        $tagForm = array();
+        foreach ($tags as $tag) {
+            $tagForm[$tag->getId()] = $tag->getName();
+        }
+        return $tagForm;
     }
 
     private function getCategories() {

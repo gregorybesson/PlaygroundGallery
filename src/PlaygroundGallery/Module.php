@@ -76,6 +76,13 @@ class Module
                     
                     return $form;
                 },
+                
+                'playgroundgallery_tag_form' => function  ($sm) {
+                    $translator = $sm->get('translator');
+                    $form = new Form\Tag(null, $sm, $translator);
+                
+                    return $form;
+                },
 
                 'playgroundgallery_category_mapper' => function  ($sm) {
                     return new Mapper\Category($sm->get('playgroundgallery_doctrine_em'), $sm->get('playgroundgallery_module_options'));
@@ -84,10 +91,15 @@ class Module
                 'playgroundgallery_media_mapper' => function  ($sm) {
                     return new Mapper\Media($sm->get('playgroundgallery_doctrine_em'), $sm->get('playgroundgallery_module_options'));
                 },
+                
+                'playgroundgallery_tag_mapper' => function  ($sm) {
+                    return new Mapper\Tag($sm->get('playgroundgallery_doctrine_em'), $sm->get('playgroundgallery_module_options'));
+                },
             ),
             'invokables' => array(
                 'playgroundgallery_category_service' => 'PlaygroundGallery\Service\Category',
                 'playgroundgallery_media_service' => 'PlaygroundGallery\Service\Media',
+                'playgroundgallery_tag_service' => 'PlaygroundGallery\Service\Tag',
             ),
         );
     }
@@ -99,6 +111,16 @@ class Module
                 'printCategoryTree' => function ($sm) {
                     $viewHelper = new View\Helper\PrintCategoryTree();
                     $viewHelper->setCategoryService($sm->getServiceLocator()->get('playgroundgallery_category_service'));
+                    return $viewHelper;
+                },
+                'printTagTree' => function ($sm) {
+                    $viewHelper = new View\Helper\PrintTagTree();
+                    $viewHelper->setTagService($sm->getServiceLocator()->get('playgroundgallery_tag_service'));
+                    return $viewHelper;
+                },
+                'getTags' => function ($sm) {
+                    $viewHelper = new View\Helper\GetTags();
+                    $viewHelper->setTagService($sm->getServiceLocator()->get('playgroundgallery_tag_service'));
                     return $viewHelper;
                 },
             ),
