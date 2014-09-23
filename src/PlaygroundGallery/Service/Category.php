@@ -50,8 +50,8 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
 
         $this->addCategoryParent($category, $data);
 
-        if(array_key_exists('websites', $data)) {
-            $category = $this->addWebsite($category, $data['websites']);
+        if(array_key_exists('locales', $data)) {
+            $category = $this->addLocale($category, $data['locales']);
         }
 
         $form->bind($category);
@@ -106,12 +106,12 @@ class Category extends EventProvider implements ServiceManagerAwareInterface
         return $category;
     }
 
-    public function addWebsite($category, $data)
+    public function addLocale($category, $data)
     {
-        foreach ($data as $websiteId) {
-            $website = $this->getServiceManager()->get('playgroundcore_website_mapper')->findById($websiteId);
-            if($website) {
-                $category->addWebsite($website);
+        foreach ($data as $localeId) {
+            $locale = $this->getServiceManager()->get('playgroundcore_locale_mapper')->findById($localeId);
+            if($locale) {
+                $category->addLocale($locale);
             }
         }
         return $category;
