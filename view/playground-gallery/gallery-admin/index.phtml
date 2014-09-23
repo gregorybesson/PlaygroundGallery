@@ -426,6 +426,11 @@
                     </div>
 
                     <?php $formCategory->bind($category) ?>
+                    <?php $ids = array(); ?>
+                    <?php foreach ($category->getLocales() as $locale) :?>
+                        <?php $ids[] = $locale->getId(); ?>
+                    <?php endforeach;?>
+                    <?php $formCategory->get('locales')->setValue($ids); ?>
                     <?php $formCategory->setAttribute('action', $this->url('admin/playgroundgallery/category/edit', array('categoryId' => $category->getId()))) ?>
                     <?php $formCategory->prepare();?>
                     <?php echo $this->form()->openTag($formCategory); ?>
