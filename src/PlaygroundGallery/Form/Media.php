@@ -62,7 +62,7 @@ class Media extends ProvidesEventsForm
             'options' => array(
                 'label' => $translator->translate('Upload image or paste url', 'playgroundgallery'),
                 'value_options' => array(
-                    'paste_url'      => $translator->translate('Past url', 'playgroundgallery'),
+                    'paste_url'      => $translator->translate('Paste url', 'playgroundgallery'),
                     'upload'        => $translator->translate('Upload image', 'playgroundgallery'),
                 ),
             ),
