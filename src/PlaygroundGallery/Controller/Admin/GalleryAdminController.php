@@ -250,7 +250,7 @@ class GalleryAdminController extends AbstractActionController
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 
-        $tmp = curl_exec($ch);
+        curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if($httpCode == 200) {
@@ -262,7 +262,7 @@ class GalleryAdminController extends AbstractActionController
 
         curl_close($ch);
 
-        return $tmp;
+        return $headersBool;
     }
 
     /**
