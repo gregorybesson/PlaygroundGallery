@@ -244,21 +244,21 @@ class GalleryAdminController extends AbstractActionController
     * @return boolean $headersBool validité de l'url
     */
     public function checkValidUrl($url) {
-        $handle = curl_init($url);
+        $ch = curl_init();
+        $timeout = 3;
+        curl_setopt($ch, CURLOPT_URL , $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 
-        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
-        $response = curl_exec($handle);
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         if($httpCode == 200) {
-            $headersBool = true;
-        }
-        else {
-            $headersBool = false;
+            curl_close($ch);
+            return true;
         }
 
-        curl_close($handle);
-
-        return $headersBool;
+        return false;
     }
 
     /**
