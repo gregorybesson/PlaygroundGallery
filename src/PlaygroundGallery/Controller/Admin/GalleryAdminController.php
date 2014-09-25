@@ -244,11 +244,17 @@ class GalleryAdminController extends AbstractActionController
     * @return boolean $headersBool validité de l'url
     */
     public function checkValidUrl($url) {
+
+        if (strpos($url, 'youtube.com')) {
+            return true;
+        }
+
         $handle = curl_init($url);
 
         curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
         $response = curl_exec($handle);
         $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+
         if($httpCode == 200) {
             $headersBool = true;
         }
