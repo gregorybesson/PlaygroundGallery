@@ -254,15 +254,11 @@ class GalleryAdminController extends AbstractActionController
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if($httpCode == 200) {
-            $headersBool = true;
-        }
-        else {
-            $headersBool = false;
+            curl_close($ch);
+            return true;
         }
 
-        curl_close($ch);
-
-        return $headersBool;
+        return false;
     }
 
     /**
