@@ -287,4 +287,8 @@ return array(
             ),
         ),
     ),
+
+    'playgroundgallery_config' => array(
+        'compression_rate_thumbnail' => 70,
+    ),
 );

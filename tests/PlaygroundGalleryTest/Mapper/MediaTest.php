@@ -37,6 +37,7 @@ class MediaTest extends \PHPUnit_Framework_TestCase
             'name' => 'CeciEstUnTitre',
             'credit' => 'CeciEstUnCredit',
             'url' => 'http://lorempixel.com/400/600/sports/2/',
+            'thumbnailUrl' => 'http://lorempixel.com/400/600/sports/2/',
             'description' => 'CeciEstUneDescription',
             'poster'      =>  'http://lorempixel.com/400/600/sports/3/',
         );
@@ -48,6 +49,7 @@ class MediaTest extends \PHPUnit_Framework_TestCase
     {
         $media = new MediaEntity();
         $media->populate($this->mediaData);
+        $media->setThumbnailUrl($this->mediaData['thumbnailUrl']);
         // save data
         $this->em->persist($media);
         $this->em->flush();

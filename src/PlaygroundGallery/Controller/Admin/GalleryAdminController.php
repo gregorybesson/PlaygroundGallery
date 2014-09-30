@@ -211,10 +211,11 @@ class GalleryAdminController extends AbstractActionController
             $form->bind($this->getRequest()->getPost());
             $data = $this->getRequest()->getPost()->toArray();
             if($form->isValid() && (!$checkUrl || $this->checkValidUrl($data['url']))) {
+                $media->removeTag();
                 $media = $this->getMediaService()->edit($data, $media);
                 
                 if($media) {
-                    $media->removeTag();
+                    $this->getMediaService()->getMediaMapper()->update($media);
                     foreach ($this->getRequest()->getPost('tags') as $tagId) {
                         if ($tag = $this->getTagService()->getTagMapper()->findById($tagId)) {
                             $media->addTag($tag);
