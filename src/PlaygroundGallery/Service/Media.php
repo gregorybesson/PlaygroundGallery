@@ -53,6 +53,8 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
      */
     public function create(array $data)
     {
+        $mediaMapper = $this->getMediaMapper();
+
         $media = new MediaEntity();
         $media->populate($data);
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
@@ -67,10 +69,9 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         if (!$form->isValid()) {
             return false;
         }
-        
-        $this->uploadImage($media, $data);
 
-        $mediaMapper = $this->getMediaMapper();
+        $media = $this->uploadImage($media, $data);
+
         $media = $mediaMapper->insert($media);
         
         return $media;
@@ -88,6 +89,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
      */
     public function edit(array $data, $media)
     {
+
         $entityManager = $this->getServiceManager()->get('playgroundgallery_doctrine_em');
 
         $form  = $this->getMediaForm();
@@ -99,11 +101,13 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         $form->setData($data);
         $media->populate($data);
 
+
         if (!$form->isValid()) {
+
             return false;
         }
         
-        $this->uploadImage($media, $data);
+        $media = $this->uploadImage($media, $data);
         
         $media = $this->getMediaMapper()->update($media);
         
@@ -263,11 +267,28 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
             $helper = $this->getServiceManager()->get('ViewHelperManager')->get('ServerUrl');
             $media_url = $helper->__invoke('/media/gallery/');
 
-            move_uploaded_file($data['uploadImage']['tmp_name'], $path . $media->getId() . "-" . $data['uploadImage']['name']);
-            $url = $media_url . $media->getId() . "-" . $data['uploadImage']['name'];
+            $id = 0;
+            $mediaId = $media->getId();
+            if (!empty($mediaId)) {
+                $id = $mediaId;
+            }
+
+            move_uploaded_file($data['uploadImage']['tmp_name'], $path . $id . "-" . $data['uploadImage']['name']);
+            $url = $media_url . $id . "-" . $data['uploadImage']['name'];
             $media->setUrl($url);
             $media->setPoster($url);
+
+
+            $config = $this->getServiceManager()->get('config');
+
+            $image = new \Imagick($url);
+            $image->thumbnailImage(580, 0);
+            $image->setCompressionQuality($config['playgroundgallery_config']['compression_rate_thumbnail']);
+            $image->writeImage($path . $id . "-thunbnail-" . $data['uploadImage']['name']);
+            $media->setThumbnailUrl($media_url . $id . "-thunbnail-" . $data['uploadImage']['name']);
+
         }
+
         return $media;
     }
     

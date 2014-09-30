@@ -93,6 +93,11 @@ class Tag implements InputFilterAwareInterface
         $this->medias[] = $media;
         return $this;
     }
+
+    public function getMedias()
+    {
+        return $this->medias;
+    }
     
     public function getChildren()
     {
