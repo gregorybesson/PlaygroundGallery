@@ -57,6 +57,12 @@ class Media implements InputFilterAwareInterface
     protected $url;
 
     /**
+     * url
+     * @ORM\Column(name="thumbnail_url", type="string", length=255, nullable=false)
+     */
+    protected $thumbnailUrl;
+
+    /**
      * poster
      * @ORM\Column(type="string", length=255, nullable=false)
      */
@@ -212,6 +218,25 @@ class Media implements InputFilterAwareInterface
     public function getUrl()
     {
     	return $this->url;
+    }
+
+    /**
+     * @param string $url
+     * @return Media
+     */
+    public function setThumbnailUrl($thumbnailUrl)
+    {
+        $this->thumbnailUrl = (string) $thumbnailUrl;
+    
+        return $this;
+    }
+    
+    /**
+     * @return string $url
+     */
+    public function getThumbnailUrl()
+    {
+        return $this->thumbnailUrl;
     }
 
     /**
