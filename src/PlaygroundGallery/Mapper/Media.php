@@ -47,18 +47,6 @@ class Media
     {
         return $this->getEntityRepository()->find($id);
     }
-
-    /**
-    * findBy : recupere des entites en fonction de filtre
-    * @param array $array tableau de filtre
-    *
-    * @return collection $galleries collection de Citoren\Entity\Media
-    */
-    public function findBy($array)
-    {
-        return $this->getEntityRepository()->findBy($array);
-    }
-
     /**
     * insert : insert en base une entité media
     * @param PlaygroundGallery\Entity\Media $media media
@@ -79,6 +67,17 @@ class Media
     public function update($entity)
     {
         return $this->persist($entity);
+    }
+
+    /**
+    * findBy : recupere des entites en fonction de filtre
+    * @param array $filter tableau de filtre
+    *
+    * @return collection $comments collection de Synthesio\Entity\Comment
+    */
+    public function findBy($filter, $order = null, $limit = null, $offset = null)
+    {
+        return $this->getEntityRepository()->findBy($filter, $order, $limit, $offset);
     }
 
     /**
