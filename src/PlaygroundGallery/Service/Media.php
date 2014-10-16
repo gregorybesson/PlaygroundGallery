@@ -261,7 +261,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
         if (!empty($data['uploadImage']['tmp_name'])) {
             $path = getcwd() . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR .  'media' . DIRECTORY_SEPARATOR . 'gallery' . DIRECTORY_SEPARATOR;
             if (!is_dir($path)) {
-                mkdir($path,0777, true);
+                mkdir($path, 0777, true);
             }
             
             $helper = $this->getServiceManager()->get('ViewHelperManager')->get('ServerUrl');
@@ -281,7 +281,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
 
             $config = $this->getServiceManager()->get('config');
 
-            $image = new \Imagick($url);
+            $image = new \Imagick($path . $id . "-" . $data['uploadImage']['name']);
             $image->thumbnailImage(580, 0);
             $image->setCompressionQuality($config['playgroundgallery_config']['compression_rate_thumbnail']);
             $image->writeImage($path . $id . "-thunbnail-" . $data['uploadImage']['name']);
