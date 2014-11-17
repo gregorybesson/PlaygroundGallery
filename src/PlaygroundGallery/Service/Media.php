@@ -264,8 +264,7 @@ class Media extends EventProvider implements ServiceManagerAwareInterface
                 mkdir($path, 0777, true);
             }
             
-            $helper = $this->getServiceManager()->get('ViewHelperManager')->get('ServerUrl');
-            $media_url = $helper->__invoke('/media/gallery/');
+            $media_url = '/media/gallery/';
 
             $id = 0;
             $mediaId = $media->getId();
